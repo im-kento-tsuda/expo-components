@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "mcp__notion__notion-fetch",
-      "mcp__notion__notion-update-page"
+      "mcp__notion__notion-update-page",
+      "Bash(pnpm run typecheck:*)",
+      "Bash(pnpm run lint:*)"
     ]
   }
 }
