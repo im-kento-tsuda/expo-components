@@ -6,7 +6,8 @@
       "Bash(pnpm run typecheck:*)",
       "Bash(pnpm run lint:*)",
       "Bash(pnpx expo:*)",
-      "Bash(pnpm start)"
+      "Bash(pnpm start)",
+      "Bash(gh repo create:*)"
     ]
   }
 }
