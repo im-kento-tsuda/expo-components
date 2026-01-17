@@ -22,6 +22,7 @@ import {
 import {
   PanGestureHandler,
   State,
+  GestureHandlerRootView,
   type PanGestureHandlerGestureEvent,
   type PanGestureHandlerStateChangeEvent,
 } from "react-native-gesture-handler";
@@ -359,34 +360,49 @@ const SheetContent = forwardRef<View, SheetContentProps>(
       backgroundColor: colors.border,
     };
 
-    const getDragAreaStyle = (): ViewStyle => {
+    const getHandleContainerStyle = (): ViewStyle => {
       if (side === "left" || side === "right") {
+        const attachSide = side === "right" ? "left" : "right";
         return {
           position: "absolute",
           top: 0,
           bottom: 0,
           width: 32,
-          [side]: 0,
+          [attachSide]: 0,
           justifyContent: "center",
           alignItems: "center",
-          zIndex: 10,
-          elevation: 10,
-          backgroundColor: "transparent",
         } as ViewStyle;
       }
+      const attachSide = side === "bottom" ? "top" : "bottom";
       return {
         position: "absolute",
         left: 0,
         right: 0,
         height: 32,
-        [side]: 0,
+        [attachSide]: 0,
         justifyContent: "center",
         alignItems: "center",
-        zIndex: 10,
-        elevation: 10,
-        backgroundColor: "transparent",
       } as ViewStyle;
     };
+
+    const getHandleBarStyle = (): ViewStyle => {
+      if (side === "left" || side === "right") {
+        return {
+          width: 4,
+          height: 36,
+          borderRadius: 2,
+          opacity: 0.7,
+        };
+      }
+      return {
+        width: 36,
+        height: 4,
+        borderRadius: 2,
+        opacity: 0.7,
+      };
+    };
+
+    const dragAxis = getDragConfig(side).axis;
 
     return (
       <Modal
@@ -396,46 +412,54 @@ const SheetContent = forwardRef<View, SheetContentProps>(
         presentationStyle="overFullScreen"
         onRequestClose={() => setOpen(false)}
       >
-        <View style={StyleSheet.absoluteFillObject} pointerEvents="box-none">
-          {/* Backdrop */}
-          <Animated.View
-            style={[styles.backdrop, { opacity: backdropOpacity }]}
-            pointerEvents={open ? "auto" : "none"}
-          >
-            <Pressable
-              style={StyleSheet.absoluteFill}
-              onPress={() => setOpen(false)}
-            />
-          </Animated.View>
-
-          {/* Sheet Content */}
-          <Animated.View
-            ref={ref as React.Ref<View>}
-            style={[
-              styles.contentBase,
-              contentStyle,
-              getSideStyle(),
-              getTransformStyle(),
-              shadowStyle,
-              style,
-            ]}
-            shouldRasterizeIOS
-            renderToHardwareTextureAndroid
-            {...props}
-          >
-            <View style={styles.handleContainer}>
-              <View style={[styles.handleBar, handleBarStyle]} />
-            </View>
-            {children}
-            <PanGestureHandler
-              onGestureEvent={handleGestureEvent}
-              onHandlerStateChange={handleGestureStateChange}
-              enabled={open}
+        <GestureHandlerRootView style={styles.gestureRoot}>
+          <View style={StyleSheet.absoluteFillObject} pointerEvents="box-none">
+            {/* Backdrop */}
+            <Animated.View
+              style={[styles.backdrop, { opacity: backdropOpacity }]}
+              pointerEvents={open ? "auto" : "none"}
             >
-              <View style={getDragAreaStyle()} pointerEvents="box-only" />
-            </PanGestureHandler>
-          </Animated.View>
-        </View>
+              <Pressable
+                style={StyleSheet.absoluteFill}
+                onPress={() => setOpen(false)}
+              />
+            </Animated.View>
+
+            {/* Sheet Content */}
+            <Animated.View
+              ref={ref as React.Ref<View>}
+              style={[
+                styles.contentBase,
+                contentStyle,
+                getSideStyle(),
+                getTransformStyle(),
+                shadowStyle,
+                style,
+              ]}
+              shouldRasterizeIOS
+              renderToHardwareTextureAndroid
+              {...props}
+            >
+              <PanGestureHandler
+                onGestureEvent={handleGestureEvent}
+                onHandlerStateChange={handleGestureStateChange}
+                enabled={open}
+                hitSlop={{ top: 16, bottom: 16, left: 16, right: 16 }}
+                activeOffsetX={dragAxis === "x" ? [-8, 8] : undefined}
+                activeOffsetY={dragAxis === "y" ? [-8, 8] : undefined}
+              >
+                <View
+                  style={[styles.handleContainer, getHandleContainerStyle()]}
+                  collapsable={false}
+                  pointerEvents="box-only"
+                >
+                  <View style={[handleBarStyle, getHandleBarStyle()]} />
+                </View>
+              </PanGestureHandler>
+              {children}
+            </Animated.View>
+          </View>
+        </GestureHandlerRootView>
       </Modal>
     );
   }
@@ -510,15 +534,12 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     elevation: 0,
   },
+  gestureRoot: {
+    flex: 1,
+  },
   handleContainer: {
     alignItems: "center",
     paddingVertical: 8,
-  },
-  handleBar: {
-    width: 36,
-    height: 4,
-    borderRadius: 2,
-    opacity: 0.7,
   },
 });
 

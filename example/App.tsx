@@ -57,6 +57,17 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
   type ThemeMode,
 } from '@im-kento-tsuda/expo-components';
 
@@ -601,6 +612,121 @@ function AppContent() {
           </CardContent>
         </Card>
 
+        {/* Tabs セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Tabs</CardTitle>
+            <CardDescription>タブ切り替え</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="account">
+              <TabsList>
+                <TabsTrigger value="account">アカウント</TabsTrigger>
+                <TabsTrigger value="password">パスワード</TabsTrigger>
+              </TabsList>
+              <TabsContent value="account">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>アカウント設定</CardTitle>
+                    <CardDescription>
+                      アカウント情報を変更します
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <View style={styles.formGroup}>
+                      <Label>名前</Label>
+                      <Input placeholder="名前を入力..." />
+                    </View>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="password">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>パスワード変更</CardTitle>
+                    <CardDescription>
+                      パスワードを変更します
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <View style={styles.formGroup}>
+                      <Label>現在のパスワード</Label>
+                      <Input placeholder="現在のパスワード" secureTextEntry />
+                    </View>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+
+        {/* Accordion セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Accordion</CardTitle>
+            <CardDescription>折りたたみコンテンツ</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Accordion type="single" collapsible defaultValue="item-1">
+              <AccordionItem value="item-1">
+                <AccordionTrigger>これはアコーディオンですか？</AccordionTrigger>
+                <AccordionContent>
+                  <Typography variant="p">
+                    はい。Shadcn UIのデザインパターンに従った、アクセシブルな折りたたみコンポーネントです。
+                  </Typography>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-2">
+                <AccordionTrigger>スタイルのカスタマイズは可能ですか？</AccordionTrigger>
+                <AccordionContent>
+                  <Typography variant="p">
+                    はい。各コンポーネントはstyle propを受け取り、自由にカスタマイズできます。
+                  </Typography>
+                </AccordionContent>
+              </AccordionItem>
+              <AccordionItem value="item-3">
+                <AccordionTrigger>アニメーションはありますか？</AccordionTrigger>
+                <AccordionContent>
+                  <Typography variant="p">
+                    はい。開閉時にスムーズなアニメーションが適用されます。
+                  </Typography>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </CardContent>
+        </Card>
+
+        {/* Collapsible セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Collapsible</CardTitle>
+            <CardDescription>展開/折りたたみ</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Collapsible>
+              <View style={styles.collapsibleHeader}>
+                <Typography variant="p" style={{ fontWeight: '500' }}>
+                  @peduarte starred 3 repositories
+                </Typography>
+                <CollapsibleTrigger asChild>
+                  <Button variant="ghost" size="sm">Toggle</Button>
+                </CollapsibleTrigger>
+              </View>
+              <View style={styles.collapsibleItem}>
+                <Typography variant="muted">@radix-ui/primitives</Typography>
+              </View>
+              <CollapsibleContent>
+                <View style={styles.collapsibleItem}>
+                  <Typography variant="muted">@radix-ui/colors</Typography>
+                </View>
+                <View style={styles.collapsibleItem}>
+                  <Typography variant="muted">@stitches/react</Typography>
+                </View>
+              </CollapsibleContent>
+            </Collapsible>
+          </CardContent>
+        </Card>
+
         {/* Toast セクション */}
         <ToastDemo />
 
@@ -763,5 +889,19 @@ const styles = StyleSheet.create({
   sheetButtons: {
     marginTop: 16,
     gap: 8,
+  },
+  collapsibleHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+  },
+  collapsibleItem: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderWidth: 1,
+    borderColor: '#e5e5e5',
+    borderRadius: 6,
+    marginTop: 8,
   },
 });

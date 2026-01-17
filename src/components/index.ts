@@ -27,3 +27,6 @@ export * from './Table';
 export * from './Empty';
 export * from './AspectRatio';
 export * from './ScrollArea';
+export * from './Tabs';
+export * from './Accordion';
+export * from './Collapsible';
