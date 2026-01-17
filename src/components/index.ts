@@ -30,3 +30,5 @@ export * from './ScrollArea';
 export * from './Tabs';
 export * from './Accordion';
 export * from './Collapsible';
+export * from './AlertDialog';
+export * from './Popover';

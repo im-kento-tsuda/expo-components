@@ -15,7 +15,8 @@
     "hoist-non-react-statics": "^3.3.2",
     "react": "19.1.0",
     "react-native": "0.81.5",
-    "react-native-gesture-handler": "~2.28.0"
+    "react-native-gesture-handler": "~2.28.0",
+    "react-native-svg": "~15.11.2"
   },
   "devDependencies": {
     "@types/react": "~19.1.0",
