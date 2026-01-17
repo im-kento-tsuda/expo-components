@@ -6,7 +6,7 @@ import {
   type ViewStyle,
   type ViewProps,
   type LayoutChangeEvent,
-  type GestureResponderEvent,
+  type PanResponderGestureState,
 } from 'react-native';
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
@@ -49,6 +49,8 @@ const Slider = forwardRef<View, SliderProps>(
     const colors = useColors();
     const [trackWidth, setTrackWidth] = useState(0);
     const trackWidthRef = useRef(0);
+    const trackPageXRef = useRef(0);
+    const touchAreaRef = useRef<View>(null);
     const onValueChangeRef = useRef(onValueChange);
     onValueChangeRef.current = onValueChange;
 
@@ -70,10 +72,10 @@ const Slider = forwardRef<View, SliderProps>(
     );
 
     const positionToValue = useCallback(
-      (locationX: number) => {
+      (relativeX: number) => {
         const width = trackWidthRef.current;
         if (width === 0) return min;
-        const percentage = Math.max(0, Math.min(1, locationX / width));
+        const percentage = Math.max(0, Math.min(1, relativeX / width));
         const rawValue = min + percentage * (max - min);
         return clampValue(rawValue);
       },
@@ -86,12 +88,12 @@ const Slider = forwardRef<View, SliderProps>(
       trackWidthRef.current = width;
     };
 
-    const updateValueFromEvent = useCallback(
-      (event: GestureResponderEvent) => {
+    const updateValueFromGesture = useCallback(
+      (gestureState: PanResponderGestureState) => {
         if (disabled) return;
-        // locationX is the touch position relative to the touched view
-        const locationX = event.nativeEvent.locationX;
-        const newValue = positionToValue(locationX);
+        // moveX is the latest screen X position of the touch
+        const relativeX = gestureState.moveX - trackPageXRef.current;
+        const newValue = positionToValue(relativeX);
         onValueChangeRef.current?.(newValue);
       },
       [disabled, positionToValue]
@@ -102,14 +104,23 @@ const Slider = forwardRef<View, SliderProps>(
         PanResponder.create({
           onStartShouldSetPanResponder: () => !disabled,
           onMoveShouldSetPanResponder: () => !disabled,
-          onPanResponderGrant: (event) => {
-            updateValueFromEvent(event);
+          onPanResponderGrant: (_event, gestureState) => {
+            // Measure track position when touch starts
+            if (touchAreaRef.current) {
+              touchAreaRef.current.measureInWindow((x) => {
+                trackPageXRef.current = x;
+                // Use x0 (initial touch position) for grant
+                const relativeX = gestureState.x0 - x;
+                const newValue = positionToValue(relativeX);
+                onValueChangeRef.current?.(newValue);
+              });
+            }
           },
-          onPanResponderMove: (event) => {
-            updateValueFromEvent(event);
+          onPanResponderMove: (_event, gestureState) => {
+            updateValueFromGesture(gestureState);
           },
         }),
-      [disabled, updateValueFromEvent]
+      [disabled, positionToValue, updateValueFromGesture]
     );
 
     const thumbPosition = valueToPosition(value);
@@ -136,6 +147,7 @@ const Slider = forwardRef<View, SliderProps>(
         {...props}
       >
         <View
+          ref={touchAreaRef}
           style={styles.touchArea}
           onLayout={handleLayout}
           {...panResponder.panHandlers}
