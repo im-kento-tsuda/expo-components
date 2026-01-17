@@ -1,17 +1,28 @@
-import React, { forwardRef, createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
+import React, {
+  forwardRef,
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+} from "react";
 import {
   View,
-  Modal,
   Pressable,
-  Animated,
   StyleSheet,
   Dimensions,
+  Animated,
+  Easing,
+  Modal,
+  Platform,
+  PanResponder,
   type ViewStyle,
   type ViewProps,
-} from 'react-native';
-import { useColors } from '../../lib/theme';
+} from "react-native";
+import { useColors } from "../../lib/theme";
 
-type SheetSide = 'bottom' | 'top' | 'left' | 'right';
+type SheetSide = "bottom" | "top" | "left" | "right";
 
 interface SheetContextType {
   open: boolean;
@@ -22,7 +33,7 @@ interface SheetContextType {
 const SheetContext = createContext<SheetContextType>({
   open: false,
   setOpen: () => {},
-  side: 'bottom',
+  side: "bottom",
 });
 
 export const useSheet = () => useContext(SheetContext);
@@ -41,7 +52,7 @@ export interface SheetProps {
 const Sheet: React.FC<SheetProps> = ({
   open: controlledOpen,
   onOpenChange,
-  side = 'bottom',
+  side = "bottom",
   children,
 }) => {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
@@ -66,7 +77,7 @@ const Sheet: React.FC<SheetProps> = ({
   );
 };
 
-Sheet.displayName = 'Sheet';
+Sheet.displayName = "Sheet";
 
 export interface SheetTriggerProps {
   /** 子要素 */
@@ -83,23 +94,22 @@ const SheetTrigger: React.FC<SheetTriggerProps> = ({ children, asChild }) => {
   };
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<{ onPress?: () => void }>, {
-      onPress: handlePress,
-    });
+    return React.cloneElement(
+      children as React.ReactElement<{ onPress?: () => void }>,
+      {
+        onPress: handlePress,
+      }
+    );
   }
 
-  return (
-    <Pressable onPress={handlePress}>
-      {children}
-    </Pressable>
-  );
+  return <Pressable onPress={handlePress}>{children}</Pressable>;
 };
 
-SheetTrigger.displayName = 'SheetTrigger';
+SheetTrigger.displayName = "SheetTrigger";
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export interface SheetContentProps extends Omit<ViewProps, 'style'> {
+export interface SheetContentProps extends Omit<ViewProps, "style"> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
@@ -110,22 +120,66 @@ const SheetContent = forwardRef<View, SheetContentProps>(
   ({ children, style, ...props }, ref) => {
     const colors = useColors();
     const { open, setOpen, side } = useSheet();
-    const translateAnim = useRef(new Animated.Value(getInitialTranslate(side))).current;
+
+    const [isVisible, setIsVisible] = useState(open);
+    const [isAnimating, setIsAnimating] = useState(false);
+    const [isDragging, setIsDragging] = useState(false);
+
+    // translate 値（サイドに応じて閉じた位置から 0 へ）
+    const translateAnim = useRef(
+      new Animated.Value(open ? 0 : getInitialTranslateValue(side))
+    ).current;
+    const animationRef = useRef<Animated.CompositeAnimation | null>(null);
+    const dragStartValueRef = useRef(0);
+    const currentValueRef = useRef(open ? 0 : getInitialTranslateValue(side));
+    const sideRef = useRef<SheetSide>(side);
+    const openRef = useRef(open);
 
     useEffect(() => {
-      if (open) {
-        Animated.timing(translateAnim, {
-          toValue: 0,
-          duration: 250,
-          useNativeDriver: true,
-        }).start();
-      } else {
-        Animated.timing(translateAnim, {
-          toValue: getInitialTranslate(side),
-          duration: 200,
-          useNativeDriver: true,
-        }).start();
+      const id = translateAnim.addListener(({ value }) => {
+        currentValueRef.current = value;
+      });
+      return () => {
+        translateAnim.removeListener(id);
+      };
+    }, [translateAnim]);
+
+    useEffect(() => {
+      sideRef.current = side;
+      openRef.current = open;
+    }, [side, open]);
+
+    // open が変更されたらアニメーション実行
+    useEffect(() => {
+      if (animationRef.current) {
+        animationRef.current.stop();
+        animationRef.current = null;
       }
+
+      const toValue = open ? 0 : getInitialTranslateValue(side);
+      const duration = open ? 320 : 260;
+      const easing = open ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic);
+
+      if (open) {
+        setIsVisible(true);
+      }
+
+      setIsAnimating(true);
+
+      animationRef.current = Animated.timing(translateAnim, {
+        toValue,
+        duration,
+        easing,
+        useNativeDriver: true,
+      });
+
+      animationRef.current.start(({ finished }) => {
+        animationRef.current = null;
+        setIsAnimating(false);
+        if (!open && finished) {
+          setIsVisible(false);
+        }
+      });
     }, [open, side, translateAnim]);
 
     const contentStyle: ViewStyle = {
@@ -133,51 +187,251 @@ const SheetContent = forwardRef<View, SheetContentProps>(
       borderColor: colors.border,
     };
 
-    const getTransformStyle = () => {
-      if (side === 'bottom' || side === 'top') {
-        return { transform: [{ translateY: translateAnim }] };
-      }
-      return { transform: [{ translateX: translateAnim }] };
-    };
-
     const getSideStyle = (): ViewStyle => {
       switch (side) {
-        case 'bottom':
-          return { bottom: 0, left: 0, right: 0, borderTopWidth: 1, borderTopLeftRadius: 12, borderTopRightRadius: 12 };
-        case 'top':
-          return { top: 0, left: 0, right: 0, borderBottomWidth: 1, borderBottomLeftRadius: 12, borderBottomRightRadius: 12 };
-        case 'left':
-          return { top: 0, bottom: 0, left: 0, width: SCREEN_WIDTH * 0.8, maxWidth: 400, borderRightWidth: 1 };
-        case 'right':
-          return { top: 0, bottom: 0, right: 0, width: SCREEN_WIDTH * 0.8, maxWidth: 400, borderLeftWidth: 1 };
+        case "bottom":
+          return {
+            bottom: 0,
+            left: 0,
+            right: 0,
+            borderTopWidth: 1,
+            borderTopLeftRadius: 12,
+            borderTopRightRadius: 12,
+          };
+        case "top":
+          return {
+            top: 0,
+            left: 0,
+            right: 0,
+            borderBottomWidth: 1,
+            borderBottomLeftRadius: 12,
+            borderBottomRightRadius: 12,
+          };
+        case "left":
+          return {
+            top: 0,
+            bottom: 0,
+            left: 0,
+            width: SCREEN_WIDTH * 0.8,
+            maxWidth: 400,
+            borderRightWidth: 1,
+          };
+        case "right":
+          return {
+            top: 0,
+            bottom: 0,
+            right: 0,
+            width: SCREEN_WIDTH * 0.8,
+            maxWidth: 400,
+            borderLeftWidth: 1,
+          };
       }
     };
 
-    if (!open) {
-      return null;
-    }
+    const getTransformStyle = () => {
+      if (side === "left" || side === "right") {
+        return { transform: [{ translateX: translateAnim }] };
+      }
+      return { transform: [{ translateY: translateAnim }] };
+    };
+
+    const backdropOpacity = translateAnim.interpolate({
+      inputRange: [0, getInitialTranslateValue(side)],
+      outputRange: [1, 0],
+      extrapolate: "clamp",
+    });
+
+    const isInteractive = isAnimating || isDragging;
+    const shadowStyle =
+      Platform.OS === "ios" && isInteractive
+        ? styles.contentNoShadow
+        : styles.contentShadow;
+
+    const getDragConfig = (currentSide: SheetSide) => {
+      if (currentSide === "bottom") {
+        return {
+          axis: "y",
+          min: 0,
+          max: SCREEN_HEIGHT,
+          size: SCREEN_HEIGHT,
+          positive: true,
+        };
+      }
+      if (currentSide === "top") {
+        return {
+          axis: "y",
+          min: -SCREEN_HEIGHT,
+          max: 0,
+          size: SCREEN_HEIGHT,
+          positive: false,
+        };
+      }
+      if (currentSide === "right") {
+        return {
+          axis: "x",
+          min: 0,
+          max: SCREEN_WIDTH,
+          size: SCREEN_WIDTH,
+          positive: true,
+        };
+      }
+      return {
+        axis: "x",
+        min: -SCREEN_WIDTH,
+        max: 0,
+        size: SCREEN_WIDTH,
+        positive: false,
+      };
+    };
+
+    const clamp = (value: number, min: number, max: number) =>
+      Math.min(Math.max(value, min), max);
+
+    const shouldStartPan = () => openRef.current;
+
+    const panResponder = useRef(
+      PanResponder.create({
+        onStartShouldSetPanResponder: shouldStartPan,
+        onStartShouldSetPanResponderCapture: shouldStartPan,
+        onMoveShouldSetPanResponder: shouldStartPan,
+        onMoveShouldSetPanResponderCapture: shouldStartPan,
+        onPanResponderGrant: () => {
+          if (animationRef.current) {
+            animationRef.current.stop();
+            animationRef.current = null;
+          }
+          dragStartValueRef.current = currentValueRef.current;
+          setIsDragging(true);
+        },
+        onPanResponderTerminationRequest: () => false,
+        onPanResponderMove: (_, gesture) => {
+          const { axis, min, max } = getDragConfig(sideRef.current);
+          const delta = axis === "x" ? gesture.dx : gesture.dy;
+          const nextValue = clamp(dragStartValueRef.current + delta, min, max);
+          translateAnim.setValue(nextValue);
+        },
+        onPanResponderRelease: (_, gesture) => {
+          setIsDragging(false);
+          const { axis, size, positive } = getDragConfig(sideRef.current);
+          const delta = axis === "x" ? gesture.dx : gesture.dy;
+          const velocity = axis === "x" ? gesture.vx : gesture.vy;
+          const isClosingDirection = positive ? delta > 0 : delta < 0;
+          const distance = Math.abs(delta);
+          const shouldClose =
+            isClosingDirection &&
+            (distance > size * 0.25 || Math.abs(velocity) > 0.8);
+
+          if (shouldClose) {
+            setOpen(false);
+            return;
+          }
+
+          setIsAnimating(true);
+          animationRef.current = Animated.timing(translateAnim, {
+            toValue: 0,
+            duration: 220,
+            easing: Easing.out(Easing.cubic),
+            useNativeDriver: true,
+          });
+          animationRef.current.start(() => {
+            animationRef.current = null;
+            setIsAnimating(false);
+          });
+        },
+        onPanResponderTerminate: () => {
+          setIsDragging(false);
+          setIsAnimating(true);
+          animationRef.current = Animated.timing(translateAnim, {
+            toValue: 0,
+            duration: 220,
+            easing: Easing.out(Easing.cubic),
+            useNativeDriver: true,
+          });
+          animationRef.current.start(() => {
+            animationRef.current = null;
+            setIsAnimating(false);
+          });
+        },
+      })
+    ).current;
+
+    const handleBarStyle: ViewStyle = {
+      backgroundColor: colors.border,
+    };
+
+    const getDragAreaStyle = (): ViewStyle => {
+      if (side === "left" || side === "right") {
+        return {
+          position: "absolute",
+          top: 0,
+          bottom: 0,
+          width: 32,
+          [side]: 0,
+          justifyContent: "center",
+          alignItems: "center",
+          zIndex: 10,
+          elevation: 10,
+          backgroundColor: "transparent",
+        } as ViewStyle;
+      }
+      return {
+        position: "absolute",
+        left: 0,
+        right: 0,
+        height: 32,
+        [side]: 0,
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: 10,
+        elevation: 10,
+        backgroundColor: "transparent",
+      } as ViewStyle;
+    };
 
     return (
       <Modal
-        visible={open}
         transparent
+        visible={isVisible}
         animationType="none"
+        presentationStyle="overFullScreen"
         onRequestClose={() => setOpen(false)}
       >
-        <View style={styles.overlay}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={() => setOpen(false)} />
+        <View style={StyleSheet.absoluteFillObject} pointerEvents="box-none">
+          {/* Backdrop */}
           <Animated.View
-            ref={ref}
+            style={[styles.backdrop, { opacity: backdropOpacity }]}
+            pointerEvents={open ? "auto" : "none"}
+          >
+            <Pressable
+              style={StyleSheet.absoluteFill}
+              onPress={() => setOpen(false)}
+            />
+          </Animated.View>
+
+          {/* Sheet Content */}
+          <Animated.View
+            ref={ref as React.Ref<View>}
             style={[
-              styles.content,
+              styles.contentBase,
               contentStyle,
               getSideStyle(),
               getTransformStyle(),
+              shadowStyle,
               style,
             ]}
+            shouldRasterizeIOS
+            renderToHardwareTextureAndroid
             {...props}
           >
+            <View style={styles.handleContainer}>
+              <View style={[styles.handleBar, handleBarStyle]} />
+            </View>
             {children}
+            <View
+              style={getDragAreaStyle()}
+              pointerEvents="box-only"
+              {...panResponder.panHandlers}
+            />
           </Animated.View>
         </View>
       </Modal>
@@ -185,17 +439,20 @@ const SheetContent = forwardRef<View, SheetContentProps>(
   }
 );
 
-SheetContent.displayName = 'SheetContent';
+SheetContent.displayName = "SheetContent";
 
-function getInitialTranslate(side: SheetSide): number {
+/**
+ * side に応じた初期 translate 値を取得
+ */
+function getInitialTranslateValue(side: SheetSide): number {
   switch (side) {
-    case 'bottom':
+    case "bottom":
       return SCREEN_HEIGHT;
-    case 'top':
+    case "top":
       return -SCREEN_HEIGHT;
-    case 'left':
+    case "left":
       return -SCREEN_WIDTH;
-    case 'right':
+    case "right":
       return SCREEN_WIDTH;
   }
 }
@@ -215,33 +472,51 @@ const SheetClose: React.FC<SheetCloseProps> = ({ children, asChild }) => {
   };
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<{ onPress?: () => void }>, {
-      onPress: handlePress,
-    });
+    return React.cloneElement(
+      children as React.ReactElement<{ onPress?: () => void }>,
+      {
+        onPress: handlePress,
+      }
+    );
   }
 
-  return (
-    <Pressable onPress={handlePress}>
-      {children}
-    </Pressable>
-  );
+  return <Pressable onPress={handlePress}>{children}</Pressable>;
 };
 
-SheetClose.displayName = 'SheetClose';
+SheetClose.displayName = "SheetClose";
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  backdrop: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
-  content: {
-    position: 'absolute',
+  contentBase: {
+    position: "absolute",
     padding: 24,
-    shadowColor: '#000',
+  },
+  contentShadow: {
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
     elevation: 8,
+  },
+  contentNoShadow: {
+    shadowColor: "transparent",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
+  },
+  handleContainer: {
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  handleBar: {
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    opacity: 0.7,
   },
 });
 
