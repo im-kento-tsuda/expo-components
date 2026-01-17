@@ -5,6 +5,8 @@ import React, {
   useState,
   useMemo,
   useCallback,
+  useEffect,
+  useRef,
 } from 'react';
 import {
   View,
@@ -25,6 +27,9 @@ interface CommandContextType {
   setSearch: (search: string) => void;
   selectedValue: string;
   setSelectedValue: (value: string) => void;
+  registerItem: (id: string, visible: boolean) => void;
+  unregisterItem: (id: string) => void;
+  visibleCount: number;
 }
 
 const CommandContext = createContext<CommandContextType | null>(null);
@@ -51,6 +56,7 @@ const Command = forwardRef<View, CommandProps>(
     const colors = useColors();
     const [search, setSearch] = useState('');
     const [selectedValue, setSelectedValueState] = useState('');
+    const [visibleItems, setVisibleItems] = useState<Record<string, boolean>>({});
 
     const setSelectedValue = useCallback(
       (value: string) => {
@@ -60,6 +66,23 @@ const Command = forwardRef<View, CommandProps>(
       [onValueChange]
     );
 
+    const registerItem = useCallback((id: string, visible: boolean) => {
+      setVisibleItems((prev) => ({ ...prev, [id]: visible }));
+    }, []);
+
+    const unregisterItem = useCallback((id: string) => {
+      setVisibleItems((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+    }, []);
+
+    const visibleCount = useMemo(
+      () => Object.values(visibleItems).filter(Boolean).length,
+      [visibleItems]
+    );
+
     const containerStyle = cn<ViewStyle>(
       styles.container,
       { backgroundColor: colors.background, borderColor: colors.border },
@@ -67,7 +90,17 @@ const Command = forwardRef<View, CommandProps>(
     );
 
     return (
-      <CommandContext.Provider value={{ search, setSearch, selectedValue, setSelectedValue }}>
+      <CommandContext.Provider
+        value={{
+          search,
+          setSearch,
+          selectedValue,
+          setSelectedValue,
+          registerItem,
+          unregisterItem,
+          visibleCount,
+        }}
+      >
         <View ref={ref} style={containerStyle} {...props}>
           {children}
         </View>
@@ -147,6 +180,10 @@ export interface CommandEmptyProps {
 
 const CommandEmpty: React.FC<CommandEmptyProps> = ({ children, style }) => {
   const colors = useColors();
+  const { visibleCount } = useCommand();
+
+  // 表示されているアイテムがある場合は何も表示しない
+  if (visibleCount > 0) return null;
 
   return (
     <View style={[styles.empty, style]}>
@@ -213,7 +250,8 @@ const CommandItem: React.FC<CommandItemProps> = ({
   style,
 }) => {
   const colors = useColors();
-  const { search, selectedValue, setSelectedValue } = useCommand();
+  const { search, selectedValue, setSelectedValue, registerItem, unregisterItem } = useCommand();
+  const itemId = useRef(`item-${value}-${Math.random().toString(36).substr(2, 9)}`).current;
 
   // 検索フィルタリング
   const isVisible = useMemo(() => {
@@ -228,6 +266,12 @@ const CommandItem: React.FC<CommandItemProps> = ({
       (typeof children === 'string' && children.toLowerCase().includes(searchLower))
     );
   }, [search, value, keywords, children]);
+
+  // 可視性をコンテキストに登録
+  useEffect(() => {
+    registerItem(itemId, isVisible);
+    return () => unregisterItem(itemId);
+  }, [itemId, isVisible, registerItem, unregisterItem]);
 
   if (!isVisible) return null;
 
