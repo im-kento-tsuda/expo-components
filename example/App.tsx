@@ -108,6 +108,18 @@ import {
   CarouselNext,
   CarouselDots,
   Combobox,
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+  NavigationMenuLink,
+  ChartContainer,
+  ChartLegend,
+  BarChart,
+  LineChart,
+  PieChart,
+  type ChartDataPoint,
   type ThemeMode,
 } from '@im-kento-tsuda/expo-components';
 
@@ -187,6 +199,24 @@ function AppContent() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [comboboxValue, setComboboxValue] = useState('');
   const colors = useColors();
+
+  // チャートデータ
+  const chartData: ChartDataPoint[] = [
+    { label: '1月', value: 186, color: colors.primary },
+    { label: '2月', value: 305, color: colors.primary },
+    { label: '3月', value: 237, color: colors.primary },
+    { label: '4月', value: 273, color: colors.primary },
+    { label: '5月', value: 209, color: colors.primary },
+    { label: '6月', value: 314, color: colors.primary },
+  ];
+
+  const pieChartData: ChartDataPoint[] = [
+    { label: 'Chrome', value: 275, color: '#4285f4' },
+    { label: 'Safari', value: 200, color: '#34a853' },
+    { label: 'Firefox', value: 187, color: '#ff7139' },
+    { label: 'Edge', value: 173, color: '#0078d4' },
+    { label: 'Other', value: 90, color: '#9e9e9e' },
+  ];
 
   const handlePress = () => {
     setLoading(true);
@@ -1121,6 +1151,97 @@ function AppContent() {
             <Typography variant="muted">
               選択値: {comboboxValue || '未選択'}
             </Typography>
+          </CardContent>
+        </Card>
+
+        {/* NavigationMenu セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>NavigationMenu</CardTitle>
+            <CardDescription>ナビゲーションメニュー</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <NavigationMenu>
+              <NavigationMenuList>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger value="getting-started">
+                    はじめに
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent value="getting-started">
+                    <NavigationMenuLink onPress={() => {}}>
+                      インストール
+                    </NavigationMenuLink>
+                    <NavigationMenuLink onPress={() => {}}>
+                      クイックスタート
+                    </NavigationMenuLink>
+                    <NavigationMenuLink onPress={() => {}}>
+                      チュートリアル
+                    </NavigationMenuLink>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuTrigger value="components">
+                    コンポーネント
+                  </NavigationMenuTrigger>
+                  <NavigationMenuContent value="components">
+                    <NavigationMenuLink onPress={() => {}} active>
+                      Button
+                    </NavigationMenuLink>
+                    <NavigationMenuLink onPress={() => {}}>
+                      Card
+                    </NavigationMenuLink>
+                    <NavigationMenuLink onPress={() => {}}>
+                      Dialog
+                    </NavigationMenuLink>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+                <NavigationMenuItem>
+                  <NavigationMenuLink onPress={() => {}}>
+                    ドキュメント
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
+          </CardContent>
+        </Card>
+
+        {/* Chart セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Chart</CardTitle>
+            <CardDescription>データ可視化チャート</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Typography variant="small" style={styles.label}>BarChart</Typography>
+            <ChartContainer>
+              <BarChart
+                data={chartData}
+                width={280}
+                height={180}
+              />
+              <ChartLegend data={chartData} />
+            </ChartContainer>
+
+            <Typography variant="small" style={styles.label}>LineChart</Typography>
+            <ChartContainer>
+              <LineChart
+                data={chartData}
+                width={280}
+                height={180}
+                fill
+              />
+            </ChartContainer>
+
+            <Typography variant="small" style={styles.label}>PieChart</Typography>
+            <ChartContainer style={{ alignItems: 'center' }}>
+              <PieChart
+                data={pieChartData}
+                size={180}
+                innerRadius={40}
+                showValues
+              />
+              <ChartLegend data={pieChartData} />
+            </ChartContainer>
           </CardContent>
         </Card>
 

@@ -40,3 +40,5 @@ export * from './Calendar';
 export * from './DatePicker';
 export * from './Carousel';
 export * from './Command';
+export * from './NavigationMenu';
+export * from './Chart';
