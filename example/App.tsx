@@ -37,8 +37,57 @@ import {
   Alert,
   AlertTitle,
   AlertDescription,
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetClose,
+  ToastProvider,
+  useToast,
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
   type ThemeMode,
 } from '@im-kento-tsuda/expo-components';
+
+function ToastDemo() {
+  const { toast } = useToast();
+
+  return (
+    <Card style={styles.section}>
+      <CardHeader>
+        <CardTitle>Toast</CardTitle>
+        <CardDescription>トースト通知</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <View style={styles.row}>
+          <Button
+            variant="outline"
+            onPress={() => toast({ title: '保存しました', description: '変更が保存されました。' })}
+          >
+            通常
+          </Button>
+          <Button
+            variant="destructive"
+            onPress={() => toast({ title: 'エラー', description: '処理に失敗しました。', variant: 'destructive' })}
+          >
+            エラー
+          </Button>
+        </View>
+      </CardContent>
+    </Card>
+  );
+}
 
 function ThemeSwitcher() {
   const { mode, setMode, colorScheme } = useTheme();
@@ -469,6 +518,108 @@ function AppContent() {
           </CardContent>
         </Card>
 
+        {/* Dialog セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Dialog</CardTitle>
+            <CardDescription>モーダルダイアログ</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button>ダイアログを開く</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>確認</DialogTitle>
+                  <DialogDescription>
+                    この操作を実行してもよろしいですか？
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                  <DialogClose asChild>
+                    <Button variant="outline">キャンセル</Button>
+                  </DialogClose>
+                  <DialogClose asChild>
+                    <Button>確認</Button>
+                  </DialogClose>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </CardContent>
+        </Card>
+
+        {/* Sheet セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Sheet</CardTitle>
+            <CardDescription>ボトムシート</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.row}>
+              <Sheet side="bottom">
+                <SheetTrigger asChild>
+                  <Button variant="outline">下から</Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>メニュー</SheetTitle>
+                    <SheetDescription>
+                      アクションを選択してください
+                    </SheetDescription>
+                  </SheetHeader>
+                  <View style={styles.sheetButtons}>
+                    <SheetClose asChild>
+                      <Button variant="outline">オプション1</Button>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Button variant="outline">オプション2</Button>
+                    </SheetClose>
+                    <SheetClose asChild>
+                      <Button>閉じる</Button>
+                    </SheetClose>
+                  </View>
+                </SheetContent>
+              </Sheet>
+              <Sheet side="right">
+                <SheetTrigger asChild>
+                  <Button variant="outline">右から</Button>
+                </SheetTrigger>
+                <SheetContent>
+                  <SheetHeader>
+                    <SheetTitle>サイドパネル</SheetTitle>
+                    <SheetDescription>
+                      詳細情報を表示
+                    </SheetDescription>
+                  </SheetHeader>
+                  <SheetClose asChild>
+                    <Button>閉じる</Button>
+                  </SheetClose>
+                </SheetContent>
+              </Sheet>
+            </View>
+          </CardContent>
+        </Card>
+
+        {/* Toast セクション */}
+        <ToastDemo />
+
+        {/* Tooltip セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Tooltip</CardTitle>
+            <CardDescription>ツールチップ（長押しで表示）</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="outline">長押ししてください</Button>
+              </TooltipTrigger>
+              <TooltipContent>ヒント: これはツールチップです</TooltipContent>
+            </Tooltip>
+          </CardContent>
+        </Card>
+
         {/* Card セクション */}
         <Card style={styles.section}>
           <CardHeader>
@@ -524,7 +675,9 @@ function AppContent() {
 export default function App() {
   return (
     <ThemeProvider defaultMode="system">
-      <AppContent />
+      <ToastProvider>
+        <AppContent />
+      </ToastProvider>
     </ThemeProvider>
   );
 }
@@ -606,5 +759,9 @@ const styles = StyleSheet.create({
   },
   alertItem: {
     marginBottom: 12,
+  },
+  sheetButtons: {
+    marginTop: 16,
+    gap: 8,
   },
 });

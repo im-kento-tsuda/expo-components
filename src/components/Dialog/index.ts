@@ -1,0 +1,10 @@
+export { Dialog, DialogTrigger, DialogContent, DialogClose, useDialog } from './Dialog';
+export { DialogHeader } from './DialogHeader';
+export { DialogTitle } from './DialogTitle';
+export { DialogDescription } from './DialogDescription';
+export { DialogFooter } from './DialogFooter';
+export type { DialogProps, DialogTriggerProps, DialogContentProps, DialogCloseProps } from './Dialog';
+export type { DialogHeaderProps } from './DialogHeader';
+export type { DialogTitleProps } from './DialogTitle';
+export type { DialogDescriptionProps } from './DialogDescription';
+export type { DialogFooterProps } from './DialogFooter';

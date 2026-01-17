@@ -16,3 +16,7 @@ export * from './Select';
 export * from './Slider';
 export * from './Progress';
 export * from './Alert';
+export * from './Dialog';
+export * from './Sheet';
+export * from './Toast';
+export * from './Tooltip';
