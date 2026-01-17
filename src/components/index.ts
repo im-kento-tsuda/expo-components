@@ -12,3 +12,7 @@ export * from './Label';
 export * from './Checkbox';
 export * from './Switch';
 export * from './RadioGroup';
+export * from './Select';
+export * from './Slider';
+export * from './Progress';
+export * from './Alert';

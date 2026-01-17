@@ -27,6 +27,16 @@ import {
   Switch,
   RadioGroup,
   RadioGroupItem,
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  Slider,
+  Progress,
+  Alert,
+  AlertTitle,
+  AlertDescription,
   type ThemeMode,
 } from '@im-kento-tsuda/expo-components';
 
@@ -68,6 +78,9 @@ function AppContent() {
   const [checkboxChecked, setCheckboxChecked] = useState(false);
   const [switchChecked, setSwitchChecked] = useState(false);
   const [radioValue, setRadioValue] = useState('option1');
+  const [selectValue, setSelectValue] = useState('');
+  const [sliderValue, setSliderValue] = useState(50);
+  const [progressValue, setProgressValue] = useState(60);
   const colors = useColors();
 
   const handlePress = () => {
@@ -307,6 +320,99 @@ function AppContent() {
           </CardContent>
         </Card>
 
+        {/* Select セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Select</CardTitle>
+            <CardDescription>ドロップダウン選択</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.formGroup}>
+              <Label>フレームワーク</Label>
+              <Select value={selectValue} onValueChange={setSelectValue}>
+                <SelectTrigger>
+                  <SelectValue placeholder="選択してください..." />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="react">React</SelectItem>
+                  <SelectItem value="vue">Vue</SelectItem>
+                  <SelectItem value="angular">Angular</SelectItem>
+                  <SelectItem value="svelte">Svelte</SelectItem>
+                  <SelectItem value="solid" disabled>Solid (準備中)</SelectItem>
+                </SelectContent>
+              </Select>
+            </View>
+            <Typography variant="muted">
+              選択された値: {selectValue || '未選択'}
+            </Typography>
+          </CardContent>
+        </Card>
+
+        {/* Slider セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Slider</CardTitle>
+            <CardDescription>スライダー入力</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.formGroup}>
+              <Label>音量: {sliderValue}%</Label>
+              <Slider
+                value={sliderValue}
+                onValueChange={setSliderValue}
+                min={0}
+                max={100}
+                step={1}
+              />
+            </View>
+            <Separator style={styles.separator} />
+            <View style={styles.formGroup}>
+              <Label disabled>無効なスライダー</Label>
+              <Slider value={30} disabled />
+            </View>
+          </CardContent>
+        </Card>
+
+        {/* Progress セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Progress</CardTitle>
+            <CardDescription>プログレスバー</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.formGroup}>
+              <Typography variant="small">確定的 ({progressValue}%)</Typography>
+              <Progress value={progressValue} />
+            </View>
+            <View style={styles.formGroup}>
+              <Typography variant="small">不確定的（ローディング）</Typography>
+              <Progress indeterminate />
+            </View>
+          </CardContent>
+        </Card>
+
+        {/* Alert セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Alert</CardTitle>
+            <CardDescription>アラートメッセージ</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Alert style={styles.alertItem}>
+              <AlertTitle>お知らせ</AlertTitle>
+              <AlertDescription>
+                新しいアップデートが利用可能です。
+              </AlertDescription>
+            </Alert>
+            <Alert variant="destructive" style={styles.alertItem}>
+              <AlertTitle>エラー</AlertTitle>
+              <AlertDescription>
+                処理中にエラーが発生しました。もう一度お試しください。
+              </AlertDescription>
+            </Alert>
+          </CardContent>
+        </Card>
+
         {/* Button セクション */}
         <Card style={styles.section}>
           <CardHeader>
@@ -497,5 +603,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  alertItem: {
+    marginBottom: 12,
   },
 });
