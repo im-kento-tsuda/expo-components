@@ -21,6 +21,7 @@ import {
   AvatarImage,
   AvatarFallback,
   Input,
+  InputGroup,
   Textarea,
   Label,
   Checkbox,
@@ -82,6 +83,7 @@ import {
   PopoverContent,
   Toggle,
   ToggleGroup,
+  ToggleGroupItem,
   ButtonGroup,
   Breadcrumb,
   BreadcrumbList,
@@ -419,6 +421,47 @@ function AppContent() {
             <View style={styles.switchRow}>
               <Label disabled>無効なSwitch</Label>
               <Switch checked disabled />
+            </View>
+          </CardContent>
+        </Card>
+
+        {/* InputGroup セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>InputGroup</CardTitle>
+            <CardDescription>入力フィールドとアドオン</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.formGroup}>
+              <Label>URL入力</Label>
+              <InputGroup
+                leftAddon="https://"
+                placeholder="example.com"
+              />
+            </View>
+            <View style={styles.formGroup}>
+              <Label>メールアドレス</Label>
+              <InputGroup
+                rightAddon="@gmail.com"
+                placeholder="username"
+              />
+            </View>
+            <View style={styles.formGroup}>
+              <Label>金額入力</Label>
+              <InputGroup
+                leftAddon="¥"
+                rightAddon=".00"
+                placeholder="1,000"
+                keyboardType="numeric"
+              />
+            </View>
+            <View style={styles.formGroup}>
+              <Label>アイコン付き</Label>
+              <InputGroup
+                leftElement={<Typography variant="muted">🔍</Typography>}
+                rightElement={<Typography variant="muted">✕</Typography>}
+                placeholder="検索..."
+              />
             </View>
           </CardContent>
         </Card>
@@ -882,15 +925,15 @@ function AppContent() {
                 value={toggleGroupValue}
                 onValueChange={setToggleGroupValue}
               >
-                <Toggle value="bold">
+                <ToggleGroupItem value="bold">
                   <Typography variant="p" style={{ fontWeight: 'bold' }}>B</Typography>
-                </Toggle>
-                <Toggle value="italic">
+                </ToggleGroupItem>
+                <ToggleGroupItem value="italic">
                   <Typography variant="p" style={{ fontStyle: 'italic' }}>I</Typography>
-                </Toggle>
-                <Toggle value="underline">
+                </ToggleGroupItem>
+                <ToggleGroupItem value="underline">
                   <Typography variant="p" style={{ textDecorationLine: 'underline' }}>U</Typography>
-                </Toggle>
+                </ToggleGroupItem>
               </ToggleGroup>
             </View>
           </CardContent>
