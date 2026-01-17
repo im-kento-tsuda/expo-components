@@ -32,3 +32,7 @@ export * from './Accordion';
 export * from './Collapsible';
 export * from './AlertDialog';
 export * from './Popover';
+export * from './Toggle';
+export * from './ButtonGroup';
+export * from './Breadcrumb';
+export * from './Pagination';
