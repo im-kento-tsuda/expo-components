@@ -16,10 +16,15 @@ import {
   Easing,
   Modal,
   Platform,
-  PanResponder,
   type ViewStyle,
   type ViewProps,
 } from "react-native";
+import {
+  PanGestureHandler,
+  State,
+  type PanGestureHandlerGestureEvent,
+  type PanGestureHandlerStateChangeEvent,
+} from "react-native-gesture-handler";
 import { useColors } from "../../lib/theme";
 
 type SheetSide = "bottom" | "top" | "left" | "right";
@@ -287,73 +292,68 @@ const SheetContent = forwardRef<View, SheetContentProps>(
     const clamp = (value: number, min: number, max: number) =>
       Math.min(Math.max(value, min), max);
 
-    const shouldStartPan = () => openRef.current;
+    const handleGestureEvent = (event: PanGestureHandlerGestureEvent) => {
+      const { translationX, translationY } = event.nativeEvent;
+      const { axis, min, max } = getDragConfig(sideRef.current);
+      const delta = axis === "x" ? translationX : translationY;
+      const nextValue = clamp(dragStartValueRef.current + delta, min, max);
+      translateAnim.setValue(nextValue);
+    };
 
-    const panResponder = useRef(
-      PanResponder.create({
-        onStartShouldSetPanResponder: shouldStartPan,
-        onStartShouldSetPanResponderCapture: shouldStartPan,
-        onMoveShouldSetPanResponder: shouldStartPan,
-        onMoveShouldSetPanResponderCapture: shouldStartPan,
-        onPanResponderGrant: () => {
-          if (animationRef.current) {
-            animationRef.current.stop();
-            animationRef.current = null;
-          }
-          dragStartValueRef.current = currentValueRef.current;
-          setIsDragging(true);
-        },
-        onPanResponderTerminationRequest: () => false,
-        onPanResponderMove: (_, gesture) => {
-          const { axis, min, max } = getDragConfig(sideRef.current);
-          const delta = axis === "x" ? gesture.dx : gesture.dy;
-          const nextValue = clamp(dragStartValueRef.current + delta, min, max);
-          translateAnim.setValue(nextValue);
-        },
-        onPanResponderRelease: (_, gesture) => {
-          setIsDragging(false);
-          const { axis, size, positive } = getDragConfig(sideRef.current);
-          const delta = axis === "x" ? gesture.dx : gesture.dy;
-          const velocity = axis === "x" ? gesture.vx : gesture.vy;
-          const isClosingDirection = positive ? delta > 0 : delta < 0;
-          const distance = Math.abs(delta);
-          const shouldClose =
-            isClosingDirection &&
-            (distance > size * 0.25 || Math.abs(velocity) > 0.8);
+    const handleGestureStateChange = (
+      event: PanGestureHandlerStateChangeEvent
+    ) => {
+      const { state, translationX, translationY, velocityX, velocityY } =
+        event.nativeEvent;
 
-          if (shouldClose) {
-            setOpen(false);
-            return;
-          }
+      if (state === State.BEGAN) {
+        if (animationRef.current) {
+          animationRef.current.stop();
+          animationRef.current = null;
+        }
+        dragStartValueRef.current = currentValueRef.current;
+        setIsDragging(true);
+        return;
+      }
 
-          setIsAnimating(true);
-          animationRef.current = Animated.timing(translateAnim, {
-            toValue: 0,
-            duration: 220,
-            easing: Easing.out(Easing.cubic),
-            useNativeDriver: true,
-          });
-          animationRef.current.start(() => {
-            animationRef.current = null;
-            setIsAnimating(false);
-          });
-        },
-        onPanResponderTerminate: () => {
-          setIsDragging(false);
-          setIsAnimating(true);
-          animationRef.current = Animated.timing(translateAnim, {
-            toValue: 0,
-            duration: 220,
-            easing: Easing.out(Easing.cubic),
-            useNativeDriver: true,
-          });
-          animationRef.current.start(() => {
-            animationRef.current = null;
-            setIsAnimating(false);
-          });
-        },
-      })
-    ).current;
+      if (state === State.ACTIVE) {
+        handleGestureEvent(event as PanGestureHandlerGestureEvent);
+        return;
+      }
+
+      if (
+        state === State.END ||
+        state === State.CANCELLED ||
+        state === State.FAILED
+      ) {
+        setIsDragging(false);
+        const { axis, size, positive } = getDragConfig(sideRef.current);
+        const delta = axis === "x" ? translationX : translationY;
+        const velocity = axis === "x" ? velocityX : velocityY;
+        const isClosingDirection = positive ? delta > 0 : delta < 0;
+        const distance = Math.abs(delta);
+        const shouldClose =
+          isClosingDirection &&
+          (distance > size * 0.25 || Math.abs(velocity) > 800);
+
+        if (shouldClose) {
+          setOpen(false);
+          return;
+        }
+
+        setIsAnimating(true);
+        animationRef.current = Animated.timing(translateAnim, {
+          toValue: 0,
+          duration: 220,
+          easing: Easing.out(Easing.cubic),
+          useNativeDriver: true,
+        });
+        animationRef.current.start(() => {
+          animationRef.current = null;
+          setIsAnimating(false);
+        });
+      }
+    };
 
     const handleBarStyle: ViewStyle = {
       backgroundColor: colors.border,
@@ -427,11 +427,13 @@ const SheetContent = forwardRef<View, SheetContentProps>(
               <View style={[styles.handleBar, handleBarStyle]} />
             </View>
             {children}
-            <View
-              style={getDragAreaStyle()}
-              pointerEvents="box-only"
-              {...panResponder.panHandlers}
-            />
+            <PanGestureHandler
+              onGestureEvent={handleGestureEvent}
+              onHandlerStateChange={handleGestureStateChange}
+              enabled={open}
+            >
+              <View style={getDragAreaStyle()} pointerEvents="box-only" />
+            </PanGestureHandler>
           </Animated.View>
         </View>
       </Modal>

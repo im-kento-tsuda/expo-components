@@ -23,3 +23,7 @@ export * from './Tooltip';
 export * from './Field';
 export * from './Form';
 export * from './InputOTP';
+export * from './Table';
+export * from './Empty';
+export * from './AspectRatio';
+export * from './ScrollArea';

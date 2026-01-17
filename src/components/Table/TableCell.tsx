@@ -1,0 +1,41 @@
+import React, { forwardRef } from 'react';
+import { Text, StyleSheet, type TextStyle, type TextProps } from 'react-native';
+import { useColors } from '../../lib/theme';
+import { cn } from '../../lib/utils';
+
+export interface TableCellProps extends Omit<TextProps, 'style'> {
+  /** 子要素 */
+  children: React.ReactNode;
+  /** カスタムスタイル */
+  style?: TextStyle;
+}
+
+const TableCell = forwardRef<Text, TableCellProps>(
+  ({ children, style, ...props }, ref) => {
+    const colors = useColors();
+
+    const cellStyle: TextStyle = {
+      color: colors.foreground,
+    };
+
+    return (
+      <Text ref={ref} style={cn<TextStyle>(styles.cell, cellStyle, style)} {...props}>
+        {children}
+      </Text>
+    );
+  }
+);
+
+TableCell.displayName = 'TableCell';
+
+const styles = StyleSheet.create({
+  cell: {
+    flex: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 14,
+    textAlign: 'left',
+  },
+});
+
+export { TableCell };

@@ -1,0 +1,16 @@
+export { Table } from './Table';
+export { TableHeader } from './TableHeader';
+export { TableBody } from './TableBody';
+export { TableRow } from './TableRow';
+export { TableHead } from './TableHead';
+export { TableCell } from './TableCell';
+export { TableFooter } from './TableFooter';
+export { TableCaption } from './TableCaption';
+export type { TableProps } from './Table';
+export type { TableHeaderProps } from './TableHeader';
+export type { TableBodyProps } from './TableBody';
+export type { TableRowProps } from './TableRow';
+export type { TableHeadProps } from './TableHead';
+export type { TableCellProps } from './TableCell';
+export type { TableFooterProps } from './TableFooter';
+export type { TableCaptionProps } from './TableCaption';
