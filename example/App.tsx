@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import { ScrollView, View, StyleSheet, SafeAreaView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import {
   Button,
@@ -12,12 +12,19 @@ import {
   ThemeProvider,
   useTheme,
   useColors,
+  Typography,
+  Badge,
+  Separator,
+  Skeleton,
+  Spinner,
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
   type ThemeMode,
 } from '@im-kento-tsuda/expo-components';
 
 function ThemeSwitcher() {
   const { mode, setMode, colorScheme } = useTheme();
-  const colors = useColors();
 
   const modes: ThemeMode[] = ['light', 'dark', 'system'];
 
@@ -60,12 +67,142 @@ function AppContent() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style="auto" />
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={[styles.header, { color: colors.foreground }]}>
+        <Typography variant="h1" style={styles.header}>
           コンポーネントカタログ
-        </Text>
+        </Typography>
 
         {/* Theme Switcher */}
         <ThemeSwitcher />
+
+        {/* Typography セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Typography</CardTitle>
+            <CardDescription>テキストスタイルバリアント</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Typography variant="h1">Heading 1</Typography>
+            <Typography variant="h2">Heading 2</Typography>
+            <Typography variant="h3">Heading 3</Typography>
+            <Typography variant="h4">Heading 4</Typography>
+            <Separator style={styles.separator} />
+            <Typography variant="p">
+              これは通常のパラグラフテキストです。本文に使用します。
+            </Typography>
+            <Typography variant="lead">
+              これはリードテキストです。導入文に使用します。
+            </Typography>
+            <Typography variant="large">Large text</Typography>
+            <Typography variant="small">Small text</Typography>
+            <Typography variant="muted">Muted text - 補足説明に使用</Typography>
+          </CardContent>
+        </Card>
+
+        {/* Badge セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Badge</CardTitle>
+            <CardDescription>ステータスラベル</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.row}>
+              <Badge>Default</Badge>
+              <Badge variant="secondary">Secondary</Badge>
+              <Badge variant="destructive">Destructive</Badge>
+              <Badge variant="outline">Outline</Badge>
+            </View>
+          </CardContent>
+        </Card>
+
+        {/* Separator セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Separator</CardTitle>
+            <CardDescription>区切り線</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Typography variant="p">上のコンテンツ</Typography>
+            <Separator style={styles.separator} />
+            <Typography variant="p">下のコンテンツ</Typography>
+            <View style={styles.rowCenter}>
+              <Typography variant="small">左</Typography>
+              <Separator orientation="vertical" style={styles.verticalSeparator} />
+              <Typography variant="small">中</Typography>
+              <Separator orientation="vertical" style={styles.verticalSeparator} />
+              <Typography variant="small">右</Typography>
+            </View>
+          </CardContent>
+        </Card>
+
+        {/* Skeleton セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Skeleton</CardTitle>
+            <CardDescription>ローディングプレースホルダー</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.skeletonRow}>
+              <Skeleton width={48} height={48} circle />
+              <View style={styles.skeletonText}>
+                <Skeleton width={150} height={16} />
+                <Skeleton width={100} height={14} />
+              </View>
+            </View>
+            <Separator style={styles.separator} />
+            <Skeleton width="100%" height={100} borderRadius={8} />
+          </CardContent>
+        </Card>
+
+        {/* Spinner セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Spinner</CardTitle>
+            <CardDescription>ローディングスピナー</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.row}>
+              <View style={styles.spinnerItem}>
+                <Spinner size="sm" />
+                <Typography variant="small">Small</Typography>
+              </View>
+              <View style={styles.spinnerItem}>
+                <Spinner size="default" />
+                <Typography variant="small">Default</Typography>
+              </View>
+              <View style={styles.spinnerItem}>
+                <Spinner size="lg" />
+                <Typography variant="small">Large</Typography>
+              </View>
+            </View>
+          </CardContent>
+        </Card>
+
+        {/* Avatar セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Avatar</CardTitle>
+            <CardDescription>プロフィール画像</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.row}>
+              <Avatar size="sm">
+                <AvatarImage source={{ uri: 'https://github.com/shadcn.png' }} />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <Avatar size="default">
+                <AvatarImage source={{ uri: 'https://github.com/shadcn.png' }} />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <Avatar size="lg">
+                <AvatarImage source={{ uri: 'https://github.com/shadcn.png' }} />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+              <Avatar size="lg">
+                <AvatarFallback>KT</AvatarFallback>
+              </Avatar>
+            </View>
+          </CardContent>
+        </Card>
 
         {/* Button セクション */}
         <Card style={styles.section}>
@@ -74,7 +211,7 @@ function AppContent() {
             <CardDescription>Shadcn UI 風ボタンコンポーネント</CardDescription>
           </CardHeader>
           <CardContent>
-            <Text style={[styles.label, { color: colors.mutedForeground }]}>Variants</Text>
+            <Typography variant="small" style={styles.label}>Variants</Typography>
             <View style={styles.row}>
               <Button onPress={() => {}}>Default</Button>
               <Button variant="secondary" onPress={() => {}}>
@@ -98,7 +235,7 @@ function AppContent() {
               </Button>
             </View>
 
-            <Text style={[styles.label, { color: colors.mutedForeground }]}>Sizes</Text>
+            <Typography variant="small" style={styles.label}>Sizes</Typography>
             <View style={styles.row}>
               <Button size="sm" onPress={() => {}}>
                 Small
@@ -111,7 +248,7 @@ function AppContent() {
               </Button>
             </View>
 
-            <Text style={[styles.label, { color: colors.mutedForeground }]}>States</Text>
+            <Typography variant="small" style={styles.label}>States</Typography>
             <View style={styles.row}>
               <Button disabled onPress={() => {}}>
                 Disabled
@@ -138,10 +275,10 @@ function AppContent() {
                 <CardDescription>カードの中にカードを配置</CardDescription>
               </CardHeader>
               <CardContent>
-                <Text style={[styles.cardText, { color: colors.cardForeground }]}>
+                <Typography variant="p">
                   CardHeader, CardTitle, CardDescription, CardContent, CardFooter
                   を組み合わせて柔軟にレイアウトできます。
-                </Text>
+                </Typography>
               </CardContent>
               <CardFooter>
                 <Button size="sm" onPress={() => {}}>
@@ -159,9 +296,9 @@ function AppContent() {
             <CardDescription>フッターにボタンを配置した例</CardDescription>
           </CardHeader>
           <CardContent>
-            <Text style={[styles.cardText, { color: colors.cardForeground }]}>
+            <Typography variant="p">
               CardFooter を使用してアクションボタンを配置できます。
-            </Text>
+            </Typography>
           </CardContent>
           <CardFooter style={styles.footerActions}>
             <Button variant="outline" onPress={() => {}}>
@@ -189,18 +326,15 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
+    paddingBottom: 32,
   },
   header: {
-    fontSize: 28,
-    fontWeight: 'bold',
     marginBottom: 24,
   },
   section: {
     marginBottom: 16,
   },
   label: {
-    fontSize: 14,
-    fontWeight: '600',
     marginTop: 16,
     marginBottom: 8,
   },
@@ -209,9 +343,31 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 8,
   },
-  cardText: {
-    fontSize: 14,
-    lineHeight: 20,
+  rowCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 12,
+  },
+  separator: {
+    marginVertical: 12,
+  },
+  verticalSeparator: {
+    height: 20,
+  },
+  skeletonRow: {
+    flexDirection: 'row',
+    gap: 12,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  skeletonText: {
+    gap: 8,
+  },
+  spinnerItem: {
+    alignItems: 'center',
+    gap: 8,
+    padding: 8,
   },
   footerActions: {
     gap: 8,
