@@ -20,6 +20,13 @@ import {
   Avatar,
   AvatarImage,
   AvatarFallback,
+  Input,
+  Textarea,
+  Label,
+  Checkbox,
+  Switch,
+  RadioGroup,
+  RadioGroupItem,
   type ThemeMode,
 } from '@im-kento-tsuda/expo-components';
 
@@ -56,6 +63,11 @@ function ThemeSwitcher() {
 
 function AppContent() {
   const [loading, setLoading] = useState(false);
+  const [inputValue, setInputValue] = useState('');
+  const [textareaValue, setTextareaValue] = useState('');
+  const [checkboxChecked, setCheckboxChecked] = useState(false);
+  const [switchChecked, setSwitchChecked] = useState(false);
+  const [radioValue, setRadioValue] = useState('option1');
   const colors = useColors();
 
   const handlePress = () => {
@@ -200,6 +212,97 @@ function AppContent() {
               <Avatar size="lg">
                 <AvatarFallback>KT</AvatarFallback>
               </Avatar>
+            </View>
+          </CardContent>
+        </Card>
+
+        {/* Form コンポーネント セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Form Components</CardTitle>
+            <CardDescription>フォーム入力コンポーネント</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {/* Input */}
+            <View style={styles.formGroup}>
+              <Label required>名前</Label>
+              <Input
+                placeholder="名前を入力..."
+                value={inputValue}
+                onChangeText={setInputValue}
+              />
+            </View>
+
+            {/* Textarea */}
+            <View style={styles.formGroup}>
+              <Label>説明</Label>
+              <Textarea
+                placeholder="説明を入力..."
+                value={textareaValue}
+                onChangeText={setTextareaValue}
+                minRows={3}
+              />
+            </View>
+
+            {/* Checkbox */}
+            <View style={styles.formGroup}>
+              <View style={styles.checkboxRow}>
+                <Checkbox
+                  checked={checkboxChecked}
+                  onCheckedChange={setCheckboxChecked}
+                />
+                <Label disabled={!checkboxChecked}>利用規約に同意する</Label>
+              </View>
+            </View>
+
+            {/* Switch */}
+            <View style={styles.formGroup}>
+              <View style={styles.switchRow}>
+                <View style={styles.switchLabel}>
+                  <Label>通知を受け取る</Label>
+                  <Typography variant="muted">
+                    メール通知を有効にします
+                  </Typography>
+                </View>
+                <Switch
+                  checked={switchChecked}
+                  onCheckedChange={setSwitchChecked}
+                />
+              </View>
+            </View>
+
+            {/* RadioGroup */}
+            <View style={styles.formGroup}>
+              <Label>プランを選択</Label>
+              <RadioGroup value={radioValue} onValueChange={setRadioValue}>
+                <View style={styles.radioRow}>
+                  <RadioGroupItem value="option1" />
+                  <Typography variant="p">無料プラン</Typography>
+                </View>
+                <View style={styles.radioRow}>
+                  <RadioGroupItem value="option2" />
+                  <Typography variant="p">プロプラン</Typography>
+                </View>
+                <View style={styles.radioRow}>
+                  <RadioGroupItem value="option3" />
+                  <Typography variant="p">エンタープライズ</Typography>
+                </View>
+              </RadioGroup>
+            </View>
+
+            {/* Disabled states */}
+            <Separator style={styles.separator} />
+            <Typography variant="small" style={styles.label}>Disabled States</Typography>
+            <View style={styles.formGroup}>
+              <Input placeholder="無効なInput" editable={false} />
+            </View>
+            <View style={styles.checkboxRow}>
+              <Checkbox checked disabled />
+              <Label disabled>無効なCheckbox</Label>
+            </View>
+            <View style={styles.switchRow}>
+              <Label disabled>無効なSwitch</Label>
+              <Switch checked disabled />
             </View>
           </CardContent>
         </Card>
@@ -370,6 +473,29 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   footerActions: {
+    gap: 8,
+  },
+  formGroup: {
+    marginBottom: 16,
+    gap: 8,
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  switchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  switchLabel: {
+    flex: 1,
+    gap: 2,
+  },
+  radioRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
   },
 });
