@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React, { forwardRef, useMemo } from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -8,6 +8,7 @@ import {
   type TextStyle,
   type TouchableOpacityProps,
 } from 'react-native';
+import { useColors, type ThemeColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
 export type ButtonVariant = 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
@@ -42,7 +43,11 @@ const Button = forwardRef<TouchableOpacity, ButtonProps>(
     },
     ref
   ) => {
+    const colors = useColors();
     const isDisabled = disabled || loading;
+
+    const variantStyles = useMemo(() => getVariantStyles(colors), [colors]);
+    const textVariantStyles = useMemo(() => getTextVariantStyles(colors), [colors]);
 
     const containerStyle = cn<ViewStyle>(
       styles.base,
@@ -59,14 +64,11 @@ const Button = forwardRef<TouchableOpacity, ButtonProps>(
       textStyle
     );
 
+    const loaderColor = getLoaderColor(variant, colors);
+
     const renderContent = () => {
       if (loading) {
-        return (
-          <ActivityIndicator
-            color={getLoaderColor(variant)}
-            size="small"
-          />
-        );
+        return <ActivityIndicator color={loaderColor} size="small" />;
       }
 
       if (typeof children === 'string') {
@@ -92,19 +94,69 @@ const Button = forwardRef<TouchableOpacity, ButtonProps>(
 
 Button.displayName = 'Button';
 
-function getLoaderColor(variant: ButtonVariant): string {
+function getLoaderColor(variant: ButtonVariant, colors: ThemeColors): string {
   switch (variant) {
     case 'default':
+      return colors.primaryForeground;
     case 'destructive':
-      return '#FFFFFF';
+      return colors.destructiveForeground;
     case 'outline':
     case 'secondary':
     case 'ghost':
     case 'link':
-      return '#18181B';
+      return colors.foreground;
     default:
-      return '#FFFFFF';
+      return colors.primaryForeground;
   }
+}
+
+function getVariantStyles(colors: ThemeColors): Record<ButtonVariant, ViewStyle> {
+  return {
+    default: {
+      backgroundColor: colors.primary,
+    },
+    destructive: {
+      backgroundColor: colors.destructive,
+    },
+    outline: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    secondary: {
+      backgroundColor: colors.secondary,
+    },
+    ghost: {
+      backgroundColor: 'transparent',
+    },
+    link: {
+      backgroundColor: 'transparent',
+    },
+  };
+}
+
+function getTextVariantStyles(colors: ThemeColors): Record<ButtonVariant, TextStyle> {
+  return {
+    default: {
+      color: colors.primaryForeground,
+    },
+    destructive: {
+      color: colors.destructiveForeground,
+    },
+    outline: {
+      color: colors.foreground,
+    },
+    secondary: {
+      color: colors.secondaryForeground,
+    },
+    ghost: {
+      color: colors.foreground,
+    },
+    link: {
+      color: colors.foreground,
+      textDecorationLine: 'underline',
+    },
+  };
 }
 
 const styles = StyleSheet.create({
@@ -120,52 +172,6 @@ const styles = StyleSheet.create({
   },
   disabled: {
     opacity: 0.5,
-  },
-});
-
-// Shadcn UI カラーパレット
-const variantStyles = StyleSheet.create({
-  default: {
-    backgroundColor: '#18181B', // zinc-900
-  },
-  destructive: {
-    backgroundColor: '#DC2626', // red-600
-  },
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#E4E4E7', // zinc-200
-  },
-  secondary: {
-    backgroundColor: '#F4F4F5', // zinc-100
-  },
-  ghost: {
-    backgroundColor: 'transparent',
-  },
-  link: {
-    backgroundColor: 'transparent',
-  },
-});
-
-const textVariantStyles = StyleSheet.create({
-  default: {
-    color: '#FAFAFA', // zinc-50
-  },
-  destructive: {
-    color: '#FAFAFA', // zinc-50
-  },
-  outline: {
-    color: '#18181B', // zinc-900
-  },
-  secondary: {
-    color: '#18181B', // zinc-900
-  },
-  ghost: {
-    color: '#18181B', // zinc-900
-  },
-  link: {
-    color: '#18181B', // zinc-900
-    textDecorationLine: 'underline',
   },
 });
 

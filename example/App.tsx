@@ -9,10 +9,47 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
+  ThemeProvider,
+  useTheme,
+  useColors,
+  type ThemeMode,
 } from '@im-kento-tsuda/expo-components';
 
-export default function App() {
+function ThemeSwitcher() {
+  const { mode, setMode, colorScheme } = useTheme();
+  const colors = useColors();
+
+  const modes: ThemeMode[] = ['light', 'dark', 'system'];
+
+  return (
+    <Card style={styles.section}>
+      <CardHeader>
+        <CardTitle>Theme Switcher</CardTitle>
+        <CardDescription>
+          現在のモード: {mode} (実際: {colorScheme})
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <View style={styles.row}>
+          {modes.map((m) => (
+            <Button
+              key={m}
+              variant={mode === m ? 'default' : 'outline'}
+              size="sm"
+              onPress={() => setMode(m)}
+            >
+              {m.charAt(0).toUpperCase() + m.slice(1)}
+            </Button>
+          ))}
+        </View>
+      </CardContent>
+    </Card>
+  );
+}
+
+function AppContent() {
   const [loading, setLoading] = useState(false);
+  const colors = useColors();
 
   const handlePress = () => {
     setLoading(true);
@@ -20,10 +57,15 @@ export default function App() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <StatusBar style="auto" />
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.header}>コンポーネントカタログ</Text>
+        <Text style={[styles.header, { color: colors.foreground }]}>
+          コンポーネントカタログ
+        </Text>
+
+        {/* Theme Switcher */}
+        <ThemeSwitcher />
 
         {/* Button セクション */}
         <Card style={styles.section}>
@@ -32,7 +74,7 @@ export default function App() {
             <CardDescription>Shadcn UI 風ボタンコンポーネント</CardDescription>
           </CardHeader>
           <CardContent>
-            <Text style={styles.label}>Variants</Text>
+            <Text style={[styles.label, { color: colors.mutedForeground }]}>Variants</Text>
             <View style={styles.row}>
               <Button onPress={() => {}}>Default</Button>
               <Button variant="secondary" onPress={() => {}}>
@@ -56,7 +98,7 @@ export default function App() {
               </Button>
             </View>
 
-            <Text style={styles.label}>Sizes</Text>
+            <Text style={[styles.label, { color: colors.mutedForeground }]}>Sizes</Text>
             <View style={styles.row}>
               <Button size="sm" onPress={() => {}}>
                 Small
@@ -69,7 +111,7 @@ export default function App() {
               </Button>
             </View>
 
-            <Text style={styles.label}>States</Text>
+            <Text style={[styles.label, { color: colors.mutedForeground }]}>States</Text>
             <View style={styles.row}>
               <Button disabled onPress={() => {}}>
                 Disabled
@@ -96,7 +138,7 @@ export default function App() {
                 <CardDescription>カードの中にカードを配置</CardDescription>
               </CardHeader>
               <CardContent>
-                <Text style={styles.cardText}>
+                <Text style={[styles.cardText, { color: colors.cardForeground }]}>
                   CardHeader, CardTitle, CardDescription, CardContent, CardFooter
                   を組み合わせて柔軟にレイアウトできます。
                 </Text>
@@ -117,7 +159,7 @@ export default function App() {
             <CardDescription>フッターにボタンを配置した例</CardDescription>
           </CardHeader>
           <CardContent>
-            <Text style={styles.cardText}>
+            <Text style={[styles.cardText, { color: colors.cardForeground }]}>
               CardFooter を使用してアクションボタンを配置できます。
             </Text>
           </CardContent>
@@ -133,10 +175,17 @@ export default function App() {
   );
 }
 
+export default function App() {
+  return (
+    <ThemeProvider defaultMode="system">
+      <AppContent />
+    </ThemeProvider>
+  );
+}
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F4F5',
   },
   content: {
     padding: 16,
@@ -145,7 +194,6 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: 'bold',
     marginBottom: 24,
-    color: '#18181B',
   },
   section: {
     marginBottom: 16,
@@ -153,7 +201,6 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#71717A',
     marginTop: 16,
     marginBottom: 8,
   },
@@ -164,7 +211,6 @@ const styles = StyleSheet.create({
   },
   cardText: {
     fontSize: 14,
-    color: '#3F3F46',
     lineHeight: 20,
   },
   footerActions: {

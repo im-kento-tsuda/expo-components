@@ -1,5 +1,6 @@
 import React, { forwardRef } from 'react';
 import { Text, StyleSheet, type TextStyle, type TextProps } from 'react-native';
+import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
 export interface CardDescriptionProps extends Omit<TextProps, 'style'> {
@@ -11,8 +12,14 @@ export interface CardDescriptionProps extends Omit<TextProps, 'style'> {
 
 const CardDescription = forwardRef<Text, CardDescriptionProps>(
   ({ children, style, ...props }, ref) => {
+    const colors = useColors();
+
+    const descriptionStyle: TextStyle = {
+      color: colors.mutedForeground,
+    };
+
     return (
-      <Text ref={ref} style={cn<TextStyle>(styles.description, style)} {...props}>
+      <Text ref={ref} style={cn<TextStyle>(styles.description, descriptionStyle, style)} {...props}>
         {children}
       </Text>
     );
@@ -25,7 +32,6 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 14,
     lineHeight: 20,
-    color: '#71717A', // zinc-500
   },
 });
 
