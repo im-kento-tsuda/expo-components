@@ -7,7 +7,13 @@
       "Bash(pnpm run lint:*)",
       "Bash(pnpx expo:*)",
       "Bash(pnpm start)",
-      "Bash(gh repo create:*)"
+      "Bash(gh repo create:*)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(pnpm run build:*)",
+      "WebSearch",
+      "Bash(pnpm install:*)"
     ]
   }
 }

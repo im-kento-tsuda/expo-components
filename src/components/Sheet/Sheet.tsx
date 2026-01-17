@@ -301,6 +301,26 @@ const SheetContent = forwardRef<View, SheetContentProps>(
       translateAnim.setValue(nextValue);
     };
 
+    const animateTo = (toValue: number, velocity?: number) => {
+      if (animationRef.current) {
+        animationRef.current.stop();
+        animationRef.current = null;
+      }
+      setIsAnimating(true);
+      animationRef.current = Animated.spring(translateAnim, {
+        toValue,
+        velocity,
+        damping: 22,
+        stiffness: 260,
+        mass: 0.9,
+        useNativeDriver: true,
+      });
+      animationRef.current.start(() => {
+        animationRef.current = null;
+        setIsAnimating(false);
+      });
+    };
+
     const handleGestureStateChange = (
       event: PanGestureHandlerStateChangeEvent
     ) => {
@@ -342,17 +362,7 @@ const SheetContent = forwardRef<View, SheetContentProps>(
           return;
         }
 
-        setIsAnimating(true);
-        animationRef.current = Animated.timing(translateAnim, {
-          toValue: 0,
-          duration: 220,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        });
-        animationRef.current.start(() => {
-          animationRef.current = null;
-          setIsAnimating(false);
-        });
+        animateTo(0, velocity);
       }
     };
 
