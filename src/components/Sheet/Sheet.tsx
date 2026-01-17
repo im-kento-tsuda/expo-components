@@ -16,6 +16,7 @@ import {
   Easing,
   Modal,
   Platform,
+  SafeAreaView,
   type ViewStyle,
   type ViewProps,
 } from "react-native";
@@ -413,6 +414,8 @@ const SheetContent = forwardRef<View, SheetContentProps>(
     };
 
     const dragAxis = getDragConfig(side).axis;
+    const ContentWrapper =
+      side === "left" || side === "right" ? SafeAreaView : View;
 
     return (
       <Modal
@@ -466,7 +469,9 @@ const SheetContent = forwardRef<View, SheetContentProps>(
                   <View style={[handleBarStyle, getHandleBarStyle()]} />
                 </View>
               </PanGestureHandler>
-              {children}
+              <ContentWrapper style={styles.contentInner}>
+                {children}
+              </ContentWrapper>
             </Animated.View>
           </View>
         </GestureHandlerRootView>
@@ -543,6 +548,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0,
     shadowRadius: 0,
     elevation: 0,
+  },
+  contentInner: {
+    flex: 1,
   },
   gestureRoot: {
     flex: 1,

@@ -68,6 +68,18 @@ import {
   Collapsible,
   CollapsibleTrigger,
   CollapsibleContent,
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
   type ThemeMode,
 } from '@im-kento-tsuda/expo-components';
 
@@ -557,6 +569,75 @@ function AppContent() {
                 </DialogFooter>
               </DialogContent>
             </Dialog>
+          </CardContent>
+        </Card>
+
+        {/* AlertDialog セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>AlertDialog</CardTitle>
+            <CardDescription>確認ダイアログ</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">アカウントを削除</Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>本当に削除しますか？</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    この操作は取り消せません。アカウントとすべてのデータが完全に削除されます。
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel asChild>
+                    <Button variant="outline">キャンセル</Button>
+                  </AlertDialogCancel>
+                  <AlertDialogAction asChild>
+                    <Button variant="destructive">削除</Button>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </CardContent>
+        </Card>
+
+        {/* Popover セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Popover</CardTitle>
+            <CardDescription>ポップオーバー</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.row}>
+              <Popover side="bottom" align="start">
+                <PopoverTrigger asChild>
+                  <Button variant="outline">下に表示</Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <Typography variant="p" style={{ fontWeight: '500' }}>
+                    ポップオーバー
+                  </Typography>
+                  <Typography variant="muted">
+                    追加情報をここに表示できます。
+                  </Typography>
+                </PopoverContent>
+              </Popover>
+              <Popover side="top" align="center">
+                <PopoverTrigger asChild>
+                  <Button variant="outline">上に表示</Button>
+                </PopoverTrigger>
+                <PopoverContent>
+                  <Typography variant="p" style={{ fontWeight: '500' }}>
+                    上部ポップオーバー
+                  </Typography>
+                  <Typography variant="muted">
+                    トリガーの上に表示されます。
+                  </Typography>
+                </PopoverContent>
+              </Popover>
+            </View>
           </CardContent>
         </Card>
 
