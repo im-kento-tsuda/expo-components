@@ -111,9 +111,20 @@ export interface NavigationMenuItemProps extends Omit<ViewProps, 'style'> {
 }
 
 const NavigationMenuItem = forwardRef<View, NavigationMenuItemProps>(
-  ({ value: _value, children, style, ...props }, ref) => {
+  ({ value, children, style, ...props }, ref) => {
+    const { activeItem } = useNavigationMenu();
+    const isActive = activeItem === value;
+
     return (
-      <View ref={ref} style={[styles.item, style]} {...props}>
+      <View
+        ref={ref}
+        style={[
+          styles.item,
+          isActive && styles.itemActive,
+          style,
+        ]}
+        {...props}
+      >
         {children}
       </View>
     );
@@ -355,15 +366,19 @@ function getLinkStyles(colors: ThemeColors, active: boolean) {
 const styles = StyleSheet.create({
   menu: {
     position: 'relative',
+    zIndex: 100,
   },
   menuHorizontal: {
     flexDirection: 'column',
+    overflow: 'visible',
   },
   menuVertical: {
     flexDirection: 'column',
+    overflow: 'visible',
   },
   list: {
     gap: 4,
+    overflow: 'visible',
   },
   listHorizontal: {
     flexDirection: 'row',
@@ -374,6 +389,10 @@ const styles = StyleSheet.create({
   },
   item: {
     position: 'relative',
+    zIndex: 1,
+  },
+  itemActive: {
+    zIndex: 1000,
   },
   trigger: {
     flexDirection: 'row',
@@ -400,12 +419,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     marginTop: 4,
-    zIndex: 100,
+    zIndex: 1000,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 8,
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
+    elevation: 20,
   },
   link: {
     paddingHorizontal: 12,

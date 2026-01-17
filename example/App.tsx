@@ -1163,7 +1163,7 @@ function AppContent() {
           <CardContent>
             <NavigationMenu>
               <NavigationMenuList>
-                <NavigationMenuItem>
+                <NavigationMenuItem value="getting-started">
                   <NavigationMenuTrigger value="getting-started">
                     はじめに
                   </NavigationMenuTrigger>
@@ -1179,7 +1179,7 @@ function AppContent() {
                     </NavigationMenuLink>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
-                <NavigationMenuItem>
+                <NavigationMenuItem value="components">
                   <NavigationMenuTrigger value="components">
                     コンポーネント
                   </NavigationMenuTrigger>
