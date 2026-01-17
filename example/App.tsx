@@ -80,6 +80,32 @@ import {
   Popover,
   PopoverTrigger,
   PopoverContent,
+  Toggle,
+  ToggleGroup,
+  ButtonGroup,
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  BreadcrumbEllipsis,
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+  PaginationEllipsis,
+  Calendar,
+  DatePicker,
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+  CarouselDots,
+  Combobox,
   type ThemeMode,
 } from '@im-kento-tsuda/expo-components';
 
@@ -153,6 +179,11 @@ function AppContent() {
   const [selectValue, setSelectValue] = useState('');
   const [sliderValue, setSliderValue] = useState(50);
   const [progressValue, setProgressValue] = useState(60);
+  const [togglePressed, setTogglePressed] = useState(false);
+  const [toggleGroupValue, setToggleGroupValue] = useState<string[]>(['bold']);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
+  const [comboboxValue, setComboboxValue] = useState('');
   const colors = useColors();
 
   const handlePress = () => {
@@ -827,6 +858,229 @@ function AppContent() {
           </CardContent>
         </Card>
 
+        {/* Toggle セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Toggle</CardTitle>
+            <CardDescription>トグルボタン</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.formGroup}>
+              <Typography variant="small">単体トグル</Typography>
+              <Toggle
+                pressed={togglePressed}
+                onPressedChange={setTogglePressed}
+              >
+                <Typography variant="p">B</Typography>
+              </Toggle>
+            </View>
+            <Separator style={styles.separator} />
+            <View style={styles.formGroup}>
+              <Typography variant="small">トグルグループ（複数選択）</Typography>
+              <ToggleGroup
+                type="multiple"
+                value={toggleGroupValue}
+                onValueChange={setToggleGroupValue}
+              >
+                <Toggle value="bold">
+                  <Typography variant="p" style={{ fontWeight: 'bold' }}>B</Typography>
+                </Toggle>
+                <Toggle value="italic">
+                  <Typography variant="p" style={{ fontStyle: 'italic' }}>I</Typography>
+                </Toggle>
+                <Toggle value="underline">
+                  <Typography variant="p" style={{ textDecorationLine: 'underline' }}>U</Typography>
+                </Toggle>
+              </ToggleGroup>
+            </View>
+          </CardContent>
+        </Card>
+
+        {/* ButtonGroup セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>ButtonGroup</CardTitle>
+            <CardDescription>ボタングループ</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.formGroup}>
+              <Typography variant="small">水平</Typography>
+              <ButtonGroup>
+                <Button variant="outline">左</Button>
+                <Button variant="outline">中</Button>
+                <Button variant="outline">右</Button>
+              </ButtonGroup>
+            </View>
+            <View style={styles.formGroup}>
+              <Typography variant="small">垂直</Typography>
+              <ButtonGroup orientation="vertical">
+                <Button variant="outline">上</Button>
+                <Button variant="outline">中</Button>
+                <Button variant="outline">下</Button>
+              </ButtonGroup>
+            </View>
+          </CardContent>
+        </Card>
+
+        {/* Breadcrumb セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Breadcrumb</CardTitle>
+            <CardDescription>パンくずリスト</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink onPress={() => {}}>Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbEllipsis />
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink onPress={() => {}}>Components</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Breadcrumb</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </CardContent>
+        </Card>
+
+        {/* Pagination セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Pagination</CardTitle>
+            <CardDescription>ページネーション</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onPress={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage === 1}
+                  />
+                </PaginationItem>
+                {[1, 2, 3].map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      isActive={currentPage === page}
+                      onPress={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationEllipsis />
+                </PaginationItem>
+                <PaginationItem>
+                  <PaginationNext
+                    onPress={() => setCurrentPage((p) => p + 1)}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+            <Typography variant="muted" style={{ textAlign: 'center', marginTop: 8 }}>
+              現在のページ: {currentPage}
+            </Typography>
+          </CardContent>
+        </Card>
+
+        {/* Calendar セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Calendar</CardTitle>
+            <CardDescription>カレンダー</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Calendar
+              selected={selectedDate}
+              onSelect={setSelectedDate}
+            />
+            <Typography variant="muted" style={{ marginTop: 8 }}>
+              選択日: {selectedDate ? selectedDate.toLocaleDateString('ja-JP') : '未選択'}
+            </Typography>
+          </CardContent>
+        </Card>
+
+        {/* DatePicker セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>DatePicker</CardTitle>
+            <CardDescription>日付選択</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.formGroup}>
+              <Label>日付</Label>
+              <DatePicker
+                value={selectedDate}
+                onChange={setSelectedDate}
+                placeholder="日付を選択..."
+              />
+            </View>
+          </CardContent>
+        </Card>
+
+        {/* Carousel セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Carousel</CardTitle>
+            <CardDescription>カルーセル</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Carousel style={{ height: 200 }}>
+              <CarouselContent>
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <CarouselItem key={num}>
+                    <View style={styles.carouselSlide}>
+                      <Typography variant="h2">{num}</Typography>
+                    </View>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+              <CarouselDots />
+            </Carousel>
+          </CardContent>
+        </Card>
+
+        {/* Combobox セクション */}
+        <Card style={styles.section}>
+          <CardHeader>
+            <CardTitle>Combobox</CardTitle>
+            <CardDescription>検索可能なドロップダウン</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <View style={styles.formGroup}>
+              <Label>フレームワーク</Label>
+              <Combobox
+                value={comboboxValue}
+                onValueChange={setComboboxValue}
+                options={[
+                  { value: 'next', label: 'Next.js' },
+                  { value: 'sveltekit', label: 'SvelteKit' },
+                  { value: 'nuxt', label: 'Nuxt.js' },
+                  { value: 'remix', label: 'Remix' },
+                  { value: 'astro', label: 'Astro' },
+                ]}
+                placeholder="フレームワークを選択..."
+                searchPlaceholder="検索..."
+                emptyMessage="見つかりません"
+              />
+            </View>
+            <Typography variant="muted">
+              選択値: {comboboxValue || '未選択'}
+            </Typography>
+          </CardContent>
+        </Card>
+
         {/* Card セクション */}
         <Card style={styles.section}>
           <CardHeader>
@@ -984,5 +1238,13 @@ const styles = StyleSheet.create({
     borderColor: '#e5e5e5',
     borderRadius: 6,
     marginTop: 8,
+  },
+  carouselSlide: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 8,
+    margin: 8,
   },
 });

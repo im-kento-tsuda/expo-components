@@ -1,21 +1,21 @@
-import React, { forwardRef, useState, useRef, useCallback } from 'react';
+import React, { forwardRef, useState, useCallback } from "react";
 import {
   View,
   Text,
   Pressable,
   Modal,
   StyleSheet,
-  Dimensions,
+  useWindowDimensions,
   type ViewStyle,
   type TextStyle,
   type ViewProps,
-  type LayoutRectangle,
-} from 'react-native';
-import { useColors } from '../../lib/theme';
-import { cn } from '../../lib/utils';
-import { Calendar } from '../Calendar';
+  type LayoutChangeEvent,
+} from "react-native";
+import { useColors } from "../../lib/theme";
+import { cn } from "../../lib/utils";
+import { Calendar } from "../Calendar";
 
-export interface DatePickerProps extends Omit<ViewProps, 'style'> {
+export interface DatePickerProps extends Omit<ViewProps, "style"> {
   /** 選択された日付 */
   value?: Date;
   /** 日付変更時のコールバック */
@@ -40,8 +40,8 @@ export interface DatePickerProps extends Omit<ViewProps, 'style'> {
 
 const defaultFormatDate = (date: Date): string => {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
   return `${year}/${month}/${day}`;
 };
 
@@ -50,7 +50,7 @@ const DatePicker = forwardRef<View, DatePickerProps>(
     {
       value,
       onChange,
-      placeholder = '日付を選択',
+      placeholder = "日付を選択",
       formatDate = defaultFormatDate,
       disabled = false,
       disabledDates,
@@ -64,40 +64,23 @@ const DatePicker = forwardRef<View, DatePickerProps>(
   ) => {
     const colors = useColors();
     const [open, setOpen] = useState(false);
-    const [triggerLayout, setTriggerLayout] = useState<LayoutRectangle | null>(null);
-    const triggerRef = useRef<View>(null);
+    const { width: windowWidth } = useWindowDimensions();
+    const [triggerWidth, setTriggerWidth] = useState<number | null>(null);
+
+    // overlay padding (16 * 2) を引いた幅で、最大320px
+    const calendarWidth =
+      triggerWidth !== null
+        ? Math.min(triggerWidth, windowWidth - 32)
+        : Math.min(windowWidth - 32, 320);
 
     const handleOpen = useCallback(() => {
       if (disabled) return;
-      triggerRef.current?.measureInWindow((x, y, width, height) => {
-        setTriggerLayout({ x, y, width, height });
-        setOpen(true);
-      });
+      setOpen(true);
     }, [disabled]);
 
     const handleSelect = (date: Date | undefined) => {
       onChange?.(date);
       setOpen(false);
-    };
-
-    const getPopoverPosition = (): ViewStyle => {
-      if (!triggerLayout) return {};
-
-      const { height: screenHeight } = Dimensions.get('window');
-      const calendarHeight = 340;
-      const gap = 8;
-
-      // 下に表示するか上に表示するか決定
-      const spaceBelow = screenHeight - triggerLayout.y - triggerLayout.height;
-      const showAbove = spaceBelow < calendarHeight + gap && triggerLayout.y > calendarHeight + gap;
-
-      return {
-        position: 'absolute',
-        left: triggerLayout.x,
-        top: showAbove
-          ? triggerLayout.y - calendarHeight - gap
-          : triggerLayout.y + triggerLayout.height + gap,
-      };
     };
 
     const triggerStyle = cn<ViewStyle>(
@@ -113,19 +96,25 @@ const DatePicker = forwardRef<View, DatePickerProps>(
       textStyle
     );
 
+    const handleLayout = (event: LayoutChangeEvent) => {
+      setTriggerWidth(event.nativeEvent.layout.width);
+    };
+
     return (
       <>
         <Pressable
-          ref={triggerRef}
           onPress={handleOpen}
           disabled={disabled}
           style={triggerStyle}
+          onLayout={handleLayout}
           {...props}
         >
           <Text style={triggerTextStyle}>
             {value ? formatDate(value) : placeholder}
           </Text>
-          <Text style={[styles.icon, { color: colors.mutedForeground }]}>📅</Text>
+          <Text style={[styles.icon, { color: colors.mutedForeground }]}>
+            📅
+          </Text>
         </Pressable>
 
         <Modal
@@ -135,18 +124,20 @@ const DatePicker = forwardRef<View, DatePickerProps>(
           onRequestClose={() => setOpen(false)}
         >
           <Pressable style={styles.overlay} onPress={() => setOpen(false)}>
-            <View style={getPopoverPosition()}>
-              <Pressable onPress={(e) => e.stopPropagation()}>
-                <Calendar
-                  selected={value}
-                  onSelect={handleSelect}
-                  disabled={disabledDates}
-                  fromDate={fromDate}
-                  toDate={toDate}
-                  style={{ ...styles.calendar, shadowColor: colors.foreground }}
-                />
-              </Pressable>
-            </View>
+            <Pressable onPress={(e) => e.stopPropagation()}>
+              <Calendar
+                selected={value}
+                onSelect={handleSelect}
+                disabled={disabledDates}
+                fromDate={fromDate}
+                toDate={toDate}
+                style={{
+                  ...styles.calendar,
+                  shadowColor: colors.foreground,
+                  width: calendarWidth,
+                }}
+              />
+            </Pressable>
           </Pressable>
         </Modal>
       </>
@@ -154,13 +145,13 @@ const DatePicker = forwardRef<View, DatePickerProps>(
   }
 );
 
-DatePicker.displayName = 'DatePicker';
+DatePicker.displayName = "DatePicker";
 
 const styles = StyleSheet.create({
   trigger: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     height: 40,
     paddingHorizontal: 12,
     borderWidth: 1,
@@ -177,7 +168,9 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'transparent',
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   calendar: {
     shadowOffset: { width: 0, height: 4 },

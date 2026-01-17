@@ -6,7 +6,7 @@ import React, {
   useRef,
   useCallback,
   Children,
-} from 'react';
+} from "react";
 import {
   View,
   ScrollView,
@@ -17,11 +17,11 @@ import {
   type ViewProps,
   type NativeSyntheticEvent,
   type NativeScrollEvent,
-} from 'react-native';
-import { useColors } from '../../lib/theme';
-import { cn } from '../../lib/utils';
+} from "react-native";
+import { useColors } from "../../lib/theme";
+import { cn } from "../../lib/utils";
 
-export type CarouselOrientation = 'horizontal' | 'vertical';
+export type CarouselOrientation = "horizontal" | "vertical";
 
 interface CarouselContextType {
   currentIndex: number;
@@ -39,12 +39,12 @@ const CarouselContext = createContext<CarouselContextType | null>(null);
 const useCarousel = () => {
   const context = useContext(CarouselContext);
   if (!context) {
-    throw new Error('Carousel components must be used within Carousel');
+    throw new Error("Carousel components must be used within Carousel");
   }
   return context;
 };
 
-export interface CarouselProps extends Omit<ViewProps, 'style'> {
+export interface CarouselProps extends Omit<ViewProps, "style"> {
   /** 方向 */
   orientation?: CarouselOrientation;
   /** 自動再生 */
@@ -66,7 +66,7 @@ export interface CarouselProps extends Omit<ViewProps, 'style'> {
 const Carousel = forwardRef<View, CarouselProps>(
   (
     {
-      orientation = 'horizontal',
+      orientation = "horizontal",
       autoPlay = false,
       autoPlayInterval = 3000,
       loop = false,
@@ -84,11 +84,14 @@ const Carousel = forwardRef<View, CarouselProps>(
 
     // CarouselContent の子要素数をカウント
     const contentChild = Children.toArray(children).find(
-      (child) => React.isValidElement(child) && (child.type as React.FC).displayName === 'CarouselContent'
+      (child) =>
+        React.isValidElement(child) &&
+        (child.type as React.FC).displayName === "CarouselContent"
     );
-    const totalItems = contentChild && React.isValidElement(contentChild)
-      ? Children.count(contentChild.props.children)
-      : 0;
+    const totalItems =
+      contentChild && React.isValidElement(contentChild)
+        ? Children.count(contentChild.props.children)
+        : 0;
 
     const canScrollPrev = loop || currentIndex > 0;
     const canScrollNext = loop || currentIndex < totalItems - 1;
@@ -103,7 +106,7 @@ const Carousel = forwardRef<View, CarouselProps>(
         }
 
         const offset =
-          orientation === 'horizontal'
+          orientation === "horizontal"
             ? { x: targetIndex * containerSize.width, y: 0 }
             : { x: 0, y: targetIndex * containerSize.height };
 
@@ -135,12 +138,20 @@ const Carousel = forwardRef<View, CarouselProps>(
 
     const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const { contentOffset } = event.nativeEvent;
-      const offset = orientation === 'horizontal' ? contentOffset.x : contentOffset.y;
-      const size = orientation === 'horizontal' ? containerSize.width : containerSize.height;
+      const offset =
+        orientation === "horizontal" ? contentOffset.x : contentOffset.y;
+      const size =
+        orientation === "horizontal"
+          ? containerSize.width
+          : containerSize.height;
 
       if (size > 0) {
         const newIndex = Math.round(offset / size);
-        if (newIndex !== currentIndex && newIndex >= 0 && newIndex < totalItems) {
+        if (
+          newIndex !== currentIndex &&
+          newIndex >= 0 &&
+          newIndex < totalItems
+        ) {
           setCurrentIndex(newIndex);
           onIndexChange?.(newIndex);
         }
@@ -170,12 +181,22 @@ const Carousel = forwardRef<View, CarouselProps>(
           {...props}
         >
           {Children.map(children, (child) => {
-            if (React.isValidElement(child) && (child.type as React.FC).displayName === 'CarouselContent') {
-              return React.cloneElement(child as React.ReactElement<{ scrollViewRef: React.RefObject<ScrollView>; onScroll: typeof handleScroll; containerSize: typeof containerSize }>, {
-                scrollViewRef,
-                onScroll: handleScroll,
-                containerSize,
-              });
+            if (
+              React.isValidElement(child) &&
+              (child.type as React.FC).displayName === "CarouselContent"
+            ) {
+              return React.cloneElement(
+                child as React.ReactElement<{
+                  scrollViewRef: React.RefObject<ScrollView>;
+                  onScroll: typeof handleScroll;
+                  containerSize: typeof containerSize;
+                }>,
+                {
+                  scrollViewRef,
+                  onScroll: handleScroll,
+                  containerSize,
+                }
+              );
             }
             return child;
           })}
@@ -185,10 +206,10 @@ const Carousel = forwardRef<View, CarouselProps>(
   }
 );
 
-Carousel.displayName = 'Carousel';
+Carousel.displayName = "Carousel";
 
 // CarouselContent
-export interface CarouselContentProps extends Omit<ViewProps, 'style'> {
+export interface CarouselContentProps extends Omit<ViewProps, "style"> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
@@ -204,7 +225,7 @@ export interface CarouselContentProps extends Omit<ViewProps, 'style'> {
 const CarouselContent = forwardRef<View, CarouselContentProps>(
   ({ children, style, scrollViewRef, onScroll, containerSize }, _ref) => {
     const { orientation } = useCarousel();
-    const isHorizontal = orientation === 'horizontal';
+    const isHorizontal = orientation === "horizontal";
 
     return (
       <ScrollView
@@ -217,12 +238,22 @@ const CarouselContent = forwardRef<View, CarouselContentProps>(
         scrollEventThrottle={16}
         style={[styles.scrollView, style]}
       >
-        <View style={[styles.content, isHorizontal ? styles.contentHorizontal : styles.contentVertical]}>
+        <View
+          style={[
+            styles.content,
+            isHorizontal ? styles.contentHorizontal : styles.contentVertical,
+          ]}
+        >
           {Children.map(children, (child) => {
             if (React.isValidElement(child)) {
-              return React.cloneElement(child as React.ReactElement<{ containerSize?: typeof containerSize }>, {
-                containerSize,
-              });
+              return React.cloneElement(
+                child as React.ReactElement<{
+                  containerSize?: typeof containerSize;
+                }>,
+                {
+                  containerSize,
+                }
+              );
             }
             return child;
           })}
@@ -232,10 +263,10 @@ const CarouselContent = forwardRef<View, CarouselContentProps>(
   }
 );
 
-CarouselContent.displayName = 'CarouselContent';
+CarouselContent.displayName = "CarouselContent";
 
 // CarouselItem
-export interface CarouselItemProps extends Omit<ViewProps, 'style'> {
+export interface CarouselItemProps extends Omit<ViewProps, "style"> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
@@ -247,11 +278,11 @@ export interface CarouselItemProps extends Omit<ViewProps, 'style'> {
 const CarouselItem = forwardRef<View, CarouselItemProps>(
   ({ children, style, containerSize, ...props }, ref) => {
     const { orientation } = useCarousel();
-    const isHorizontal = orientation === 'horizontal';
+    const isHorizontal = orientation === "horizontal";
 
     const itemStyle: ViewStyle = {
-      width: isHorizontal ? containerSize?.width : '100%',
-      height: isHorizontal ? '100%' : containerSize?.height,
+      width: isHorizontal ? containerSize?.width : "100%",
+      height: isHorizontal ? "100%" : containerSize?.height,
     };
 
     return (
@@ -262,7 +293,7 @@ const CarouselItem = forwardRef<View, CarouselItemProps>(
   }
 );
 
-CarouselItem.displayName = 'CarouselItem';
+CarouselItem.displayName = "CarouselItem";
 
 // CarouselPrevious
 export interface CarouselPreviousProps {
@@ -272,30 +303,52 @@ export interface CarouselPreviousProps {
   children?: React.ReactNode;
 }
 
-const CarouselPrevious: React.FC<CarouselPreviousProps> = ({ style, children }) => {
+const CarouselPrevious: React.FC<CarouselPreviousProps> = ({
+  style,
+  children,
+}) => {
   const colors = useColors();
   const { scrollPrev, canScrollPrev, orientation } = useCarousel();
 
   const buttonStyle = cn<ViewStyle>(
     styles.navButton,
     { backgroundColor: colors.background, borderColor: colors.border },
-    orientation === 'horizontal' ? styles.navButtonLeft : styles.navButtonTop,
     !canScrollPrev && styles.navButtonDisabled,
     style
   );
 
+  const wrapperStyle =
+    orientation === "horizontal"
+      ? styles.navButtonWrapperLeft
+      : styles.navButtonWrapperTop;
+
   return (
-    <Pressable onPress={scrollPrev} disabled={!canScrollPrev} style={buttonStyle}>
-      {children || (
-        <Text style={[styles.navButtonText, { color: canScrollPrev ? colors.foreground : colors.mutedForeground }]}>
-          {orientation === 'horizontal' ? '‹' : '∧'}
-        </Text>
-      )}
-    </Pressable>
+    <View style={wrapperStyle}>
+      <Pressable
+        onPress={scrollPrev}
+        disabled={!canScrollPrev}
+        style={buttonStyle}
+      >
+        {children || (
+          <Text
+            style={[
+              styles.navButtonText,
+              {
+                color: canScrollPrev
+                  ? colors.foreground
+                  : colors.mutedForeground,
+              },
+            ]}
+          >
+            {orientation === "horizontal" ? "‹" : "∧"}
+          </Text>
+        )}
+      </Pressable>
+    </View>
   );
 };
 
-CarouselPrevious.displayName = 'CarouselPrevious';
+CarouselPrevious.displayName = "CarouselPrevious";
 
 // CarouselNext
 export interface CarouselNextProps {
@@ -312,23 +365,42 @@ const CarouselNext: React.FC<CarouselNextProps> = ({ style, children }) => {
   const buttonStyle = cn<ViewStyle>(
     styles.navButton,
     { backgroundColor: colors.background, borderColor: colors.border },
-    orientation === 'horizontal' ? styles.navButtonRight : styles.navButtonBottom,
     !canScrollNext && styles.navButtonDisabled,
     style
   );
 
+  const wrapperStyle =
+    orientation === "horizontal"
+      ? styles.navButtonWrapperRight
+      : styles.navButtonWrapperBottom;
+
   return (
-    <Pressable onPress={scrollNext} disabled={!canScrollNext} style={buttonStyle}>
-      {children || (
-        <Text style={[styles.navButtonText, { color: canScrollNext ? colors.foreground : colors.mutedForeground }]}>
-          {orientation === 'horizontal' ? '›' : '∨'}
-        </Text>
-      )}
-    </Pressable>
+    <View style={wrapperStyle}>
+      <Pressable
+        onPress={scrollNext}
+        disabled={!canScrollNext}
+        style={buttonStyle}
+      >
+        {children || (
+          <Text
+            style={[
+              styles.navButtonText,
+              {
+                color: canScrollNext
+                  ? colors.foreground
+                  : colors.mutedForeground,
+              },
+            ]}
+          >
+            {orientation === "horizontal" ? "›" : "∨"}
+          </Text>
+        )}
+      </Pressable>
+    </View>
   );
 };
 
-CarouselNext.displayName = 'CarouselNext';
+CarouselNext.displayName = "CarouselNext";
 
 // CarouselDots (インジケーター)
 export interface CarouselDotsProps {
@@ -338,10 +410,16 @@ export interface CarouselDotsProps {
 
 const CarouselDots: React.FC<CarouselDotsProps> = ({ style }) => {
   const colors = useColors();
-  const { currentIndex, totalItems, scrollToIndex } = useCarousel();
+  const { currentIndex, totalItems, scrollToIndex, orientation } =
+    useCarousel();
+
+  const dotsStyle =
+    orientation === "horizontal"
+      ? [styles.dotsBase, styles.dotsHorizontalOverlay, style]
+      : [styles.dotsBase, style];
 
   return (
-    <View style={[styles.dots, style]}>
+    <View style={dotsStyle}>
       {Array.from({ length: totalItems }).map((_, index) => (
         <Pressable
           key={index}
@@ -349,7 +427,8 @@ const CarouselDots: React.FC<CarouselDotsProps> = ({ style }) => {
           style={[
             styles.dot,
             {
-              backgroundColor: index === currentIndex ? colors.primary : colors.muted,
+              backgroundColor:
+                index === currentIndex ? colors.primary : colors.muted,
             },
           ]}
         />
@@ -358,73 +437,101 @@ const CarouselDots: React.FC<CarouselDotsProps> = ({ style }) => {
   );
 };
 
-CarouselDots.displayName = 'CarouselDots';
+CarouselDots.displayName = "CarouselDots";
 
 const styles = StyleSheet.create({
   container: {
-    position: 'relative',
-    overflow: 'hidden',
+    position: "relative",
+    overflow: "hidden",
   },
   scrollView: {
     flex: 1,
   },
   content: {},
   contentHorizontal: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   contentVertical: {
-    flexDirection: 'column',
+    flexDirection: "column",
   },
   item: {
-    overflow: 'hidden',
+    overflow: "hidden",
   },
-  navButton: {
-    position: 'absolute',
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  navButtonWrapperLeft: {
+    position: "absolute",
+    left: 8,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
     zIndex: 10,
   },
-  navButtonLeft: {
-    left: 8,
-    top: '50%',
-    marginTop: -16,
-  },
-  navButtonRight: {
+  navButtonWrapperRight: {
+    position: "absolute",
     right: 8,
-    top: '50%',
-    marginTop: -16,
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+    zIndex: 10,
   },
-  navButtonTop: {
+  navButtonWrapperTop: {
+    position: "absolute",
     top: 8,
-    left: '50%',
-    marginLeft: -16,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 10,
   },
-  navButtonBottom: {
-    bottom: 8,
-    left: '50%',
-    marginLeft: -16,
+  navButtonWrapperBottom: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    alignItems: "center",
+    zIndex: 10,
+  },
+  navButton: {
+    width: 20,
+    height: 20,
+    minWidth: 20,
+    minHeight: 20,
+    maxWidth: 20,
+    maxHeight: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 0,
+    overflow: "hidden",
+    display: "flex",
   },
   navButtonText: {
-    fontSize: 20,
-    fontWeight: '500',
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center",
+    includeFontPadding: false,
+    textAlignVertical: "center",
+    position: "relative",
+    top: -1,
   },
   navButtonDisabled: {
     opacity: 0.5,
   },
-  dots: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+  dotsBase: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     gap: 8,
     paddingVertical: 12,
   },
+  dotsHorizontalOverlay: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 8,
+  },
   dot: {
-    width: 8,
-    height: 8,
+    width: 6,
+    height: 6,
     borderRadius: 4,
   },
 });
