@@ -14,7 +14,15 @@
       "Bash(pnpm run build:*)",
       "WebSearch",
       "Bash(pnpm install:*)",
-      "mcp__notion__notion-search"
+      "mcp__notion__notion-search",
+      "WebFetch(domain:dev.to)",
+      "WebFetch(domain:www.npmjs.com)",
+      "WebFetch(domain:gist.github.com)",
+      "WebFetch(domain:blog.adebayo.dev)",
+      "mcp__github__create_issue",
+      "Bash(npx expo install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(pnpm typecheck:*)"
     ]
   }
 }
