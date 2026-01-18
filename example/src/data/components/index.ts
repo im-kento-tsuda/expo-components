@@ -49,6 +49,7 @@ import { toastDoc } from './toast';
 import { tooltipDoc } from './tooltip';
 import { popoverDoc } from './popover';
 import { spinnerDoc } from './spinner';
+import { chatDoc } from './chat';
 
 // Navigation
 import { breadcrumbDoc } from './breadcrumb';
@@ -103,6 +104,7 @@ export const componentDocs: ComponentDoc[] = [
   tooltipDoc,
   popoverDoc,
   spinnerDoc,
+  chatDoc,
   // Navigation
   breadcrumbDoc,
   paginationDoc,
