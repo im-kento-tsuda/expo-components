@@ -15,7 +15,7 @@ const CollapsibleContext = createContext<CollapsibleContextType>({
 
 export const useCollapsible = () => useContext(CollapsibleContext);
 
-export interface CollapsibleProps extends Omit<ViewProps, 'style'> {
+export interface CollapsibleProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 開閉状態 */
   open?: boolean;
   /** デフォルトの開閉状態 */
@@ -28,6 +28,8 @@ export interface CollapsibleProps extends Omit<ViewProps, 'style'> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Collapsible = forwardRef<View, CollapsibleProps>(
@@ -39,6 +41,7 @@ const Collapsible = forwardRef<View, CollapsibleProps>(
       disabled = false,
       children,
       style,
+      className,
       ...props
     },
     ref
@@ -62,7 +65,7 @@ const Collapsible = forwardRef<View, CollapsibleProps>(
 
     return (
       <CollapsibleContext.Provider value={{ open, onOpenChange: handleOpenChange, disabled }}>
-        <View ref={ref} style={[styles.collapsible, style]} {...props}>
+        <View ref={ref} className={className} style={[styles.collapsible, style]} {...props}>
           {children}
         </View>
       </CollapsibleContext.Provider>

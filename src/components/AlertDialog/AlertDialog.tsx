@@ -99,15 +99,17 @@ const AlertDialogTrigger: React.FC<AlertDialogTriggerProps> = ({
 
 AlertDialogTrigger.displayName = 'AlertDialogTrigger';
 
-export interface AlertDialogContentProps extends Omit<ViewProps, 'style'> {
+export interface AlertDialogContentProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const AlertDialogContent = forwardRef<View, AlertDialogContentProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const colors = useColors();
     const { open } = useAlertDialog();
 
@@ -128,6 +130,7 @@ const AlertDialogContent = forwardRef<View, AlertDialogContentProps>(
         <View style={styles.overlay}>
           <View
             ref={ref}
+            className={className}
             style={cn<ViewStyle>(styles.content, contentStyle, style)}
             {...props}
           >
@@ -141,17 +144,19 @@ const AlertDialogContent = forwardRef<View, AlertDialogContentProps>(
 
 AlertDialogContent.displayName = 'AlertDialogContent';
 
-export interface AlertDialogHeaderProps extends Omit<ViewProps, 'style'> {
+export interface AlertDialogHeaderProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const AlertDialogHeader = forwardRef<View, AlertDialogHeaderProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     return (
-      <View ref={ref} style={cn<ViewStyle>(styles.header, style)} {...props}>
+      <View ref={ref} className={className} style={cn<ViewStyle>(styles.header, style)} {...props}>
         {children}
       </View>
     );
@@ -160,17 +165,19 @@ const AlertDialogHeader = forwardRef<View, AlertDialogHeaderProps>(
 
 AlertDialogHeader.displayName = 'AlertDialogHeader';
 
-export interface AlertDialogFooterProps extends Omit<ViewProps, 'style'> {
+export interface AlertDialogFooterProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const AlertDialogFooter = forwardRef<View, AlertDialogFooterProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     return (
-      <View ref={ref} style={cn<ViewStyle>(styles.footer, style)} {...props}>
+      <View ref={ref} className={className} style={cn<ViewStyle>(styles.footer, style)} {...props}>
         {children}
       </View>
     );
@@ -184,11 +191,14 @@ export interface AlertDialogTitleProps {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const AlertDialogTitle: React.FC<AlertDialogTitleProps> = ({
   children,
   style,
+  className,
 }) => {
   const colors = useColors();
 
@@ -196,7 +206,7 @@ const AlertDialogTitle: React.FC<AlertDialogTitleProps> = ({
     color: colors.foreground,
   };
 
-  return <Text style={[styles.title, textStyle, style]}>{children}</Text>;
+  return <Text className={className} style={[styles.title, textStyle, style]}>{children}</Text>;
 };
 
 AlertDialogTitle.displayName = 'AlertDialogTitle';
@@ -206,11 +216,14 @@ export interface AlertDialogDescriptionProps {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const AlertDialogDescription: React.FC<AlertDialogDescriptionProps> = ({
   children,
   style,
+  className,
 }) => {
   const colors = useColors();
 
@@ -219,7 +232,7 @@ const AlertDialogDescription: React.FC<AlertDialogDescriptionProps> = ({
   };
 
   return (
-    <Text style={[styles.description, textStyle, style]}>{children}</Text>
+    <Text className={className} style={[styles.description, textStyle, style]}>{children}</Text>
   );
 };
 

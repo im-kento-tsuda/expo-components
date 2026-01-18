@@ -42,17 +42,19 @@ const useCommand = () => {
   return context;
 };
 
-export interface CommandProps extends Omit<ViewProps, 'style'> {
+export interface CommandProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
   /** 値変更時のコールバック */
   onValueChange?: (value: string) => void;
 }
 
 const Command = forwardRef<View, CommandProps>(
-  ({ children, style, onValueChange, ...props }, ref) => {
+  ({ children, style, className, onValueChange, ...props }, ref) => {
     const colors = useColors();
     const [search, setSearch] = useState('');
     const [selectedValue, setSelectedValueState] = useState('');
@@ -101,7 +103,7 @@ const Command = forwardRef<View, CommandProps>(
           visibleCount,
         }}
       >
-        <View ref={ref} style={containerStyle} {...props}>
+        <View ref={ref} className={className} style={containerStyle} {...props}>
           {children}
         </View>
       </CommandContext.Provider>
@@ -117,6 +119,8 @@ export interface CommandInputProps {
   placeholder?: string;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
   /** テキストのカスタムスタイル */
   textStyle?: TextStyle;
 }
@@ -124,13 +128,14 @@ export interface CommandInputProps {
 const CommandInput: React.FC<CommandInputProps> = ({
   placeholder = '検索...',
   style,
+  className,
   textStyle,
 }) => {
   const colors = useColors();
   const { search, setSearch } = useCommand();
 
   return (
-    <View style={[styles.inputContainer, { borderColor: colors.border }, style]}>
+    <View className={className} style={[styles.inputContainer, { borderColor: colors.border }, style]}>
       <Text style={[styles.searchIcon, { color: colors.mutedForeground }]}>🔍</Text>
       <TextInput
         value={search}
@@ -146,18 +151,21 @@ const CommandInput: React.FC<CommandInputProps> = ({
 CommandInput.displayName = 'CommandInput';
 
 // CommandList
-export interface CommandListProps extends Omit<ViewProps, 'style'> {
+export interface CommandListProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const CommandList = forwardRef<View, CommandListProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     return (
       <ScrollView
         ref={ref as React.Ref<ScrollView>}
+        className={className}
         style={[styles.list, style]}
         keyboardShouldPersistTaps="handled"
         {...props}
@@ -176,9 +184,11 @@ export interface CommandEmptyProps {
   children?: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
-const CommandEmpty: React.FC<CommandEmptyProps> = ({ children, style }) => {
+const CommandEmpty: React.FC<CommandEmptyProps> = ({ children, style, className }) => {
   const colors = useColors();
   const { visibleCount } = useCommand();
 
@@ -186,7 +196,7 @@ const CommandEmpty: React.FC<CommandEmptyProps> = ({ children, style }) => {
   if (visibleCount > 0) return null;
 
   return (
-    <View style={[styles.empty, style]}>
+    <View className={className} style={[styles.empty, style]}>
       <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
         {children || '結果が見つかりません'}
       </Text>
@@ -197,21 +207,23 @@ const CommandEmpty: React.FC<CommandEmptyProps> = ({ children, style }) => {
 CommandEmpty.displayName = 'CommandEmpty';
 
 // CommandGroup
-export interface CommandGroupProps extends Omit<ViewProps, 'style'> {
+export interface CommandGroupProps extends Omit<ViewProps, 'style' | 'className'> {
   /** グループ見出し */
   heading?: string;
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const CommandGroup = forwardRef<View, CommandGroupProps>(
-  ({ heading, children, style, ...props }, ref) => {
+  ({ heading, children, style, className, ...props }, ref) => {
     const colors = useColors();
 
     return (
-      <View ref={ref} style={[styles.group, style]} {...props}>
+      <View ref={ref} className={className} style={[styles.group, style]} {...props}>
         {heading && (
           <Text style={[styles.groupHeading, { color: colors.mutedForeground }]}>
             {heading}
@@ -239,6 +251,8 @@ export interface CommandItemProps {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const CommandItem: React.FC<CommandItemProps> = ({
@@ -248,6 +262,7 @@ const CommandItem: React.FC<CommandItemProps> = ({
   keywords = [],
   children,
   style,
+  className,
 }) => {
   const colors = useColors();
   const { search, selectedValue, setSelectedValue, registerItem, unregisterItem } = useCommand();
@@ -287,6 +302,7 @@ const CommandItem: React.FC<CommandItemProps> = ({
     <Pressable
       onPress={handlePress}
       disabled={disabled}
+      className={className}
       style={({ pressed }) => [
         styles.item,
         isSelected && { backgroundColor: colors.muted },
@@ -315,12 +331,14 @@ CommandItem.displayName = 'CommandItem';
 export interface CommandSeparatorProps {
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
-const CommandSeparator: React.FC<CommandSeparatorProps> = ({ style }) => {
+const CommandSeparator: React.FC<CommandSeparatorProps> = ({ style, className }) => {
   const colors = useColors();
 
-  return <View style={[styles.separator, { backgroundColor: colors.border }, style]} />;
+  return <View className={className} style={[styles.separator, { backgroundColor: colors.border }, style]} />;
 };
 
 CommandSeparator.displayName = 'CommandSeparator';

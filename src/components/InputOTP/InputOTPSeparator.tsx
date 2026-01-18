@@ -2,17 +2,19 @@ import React, { forwardRef } from 'react';
 import { View, StyleSheet, type ViewStyle, type ViewProps } from 'react-native';
 import { useColors } from '../../lib/theme';
 
-export interface InputOTPSeparatorProps extends Omit<ViewProps, 'style'> {
+export interface InputOTPSeparatorProps extends Omit<ViewProps, 'style' | 'className'> {
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const InputOTPSeparator = forwardRef<View, InputOTPSeparatorProps>(
-  ({ style, ...props }, ref) => {
+  ({ style, className, ...props }, ref) => {
     const colors = useColors();
 
     return (
-      <View ref={ref} style={[styles.separator, style]} {...props}>
+      <View ref={ref} className={className} style={[styles.separator, style]} {...props}>
         <View style={[styles.dash, { backgroundColor: colors.border }]} />
       </View>
     );

@@ -23,7 +23,7 @@ const SelectContext = createContext<SelectContextType>({
 
 export const useSelect = () => useContext(SelectContext);
 
-export interface SelectProps extends Omit<ViewProps, 'style'> {
+export interface SelectProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 選択された値 */
   value?: string;
   /** 値変更時のコールバック */
@@ -34,10 +34,12 @@ export interface SelectProps extends Omit<ViewProps, 'style'> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Select = forwardRef<View, SelectProps>(
-  ({ value, onValueChange, disabled = false, children, style, ...props }, ref) => {
+  ({ value, onValueChange, disabled = false, children, style, className, ...props }, ref) => {
     const [open, setOpen] = useState(false);
 
     const handleSetOpen = useCallback((newOpen: boolean) => {
@@ -48,7 +50,7 @@ const Select = forwardRef<View, SelectProps>(
 
     return (
       <SelectContext.Provider value={{ value, onValueChange, open, setOpen: handleSetOpen, disabled }}>
-        <View ref={ref} style={style} {...props}>
+        <View ref={ref} className={className} style={style} {...props}>
           {children}
         </View>
       </SelectContext.Provider>

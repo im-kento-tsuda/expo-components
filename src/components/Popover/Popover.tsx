@@ -200,17 +200,19 @@ const PopoverTrigger: React.FC<PopoverTriggerProps> = ({
 
 PopoverTrigger.displayName = 'PopoverTrigger';
 
-export interface PopoverContentProps extends Omit<ViewProps, 'style'> {
+export interface PopoverContentProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
   /** コンテンツの幅 */
   width?: number;
 }
 
 const PopoverContent = forwardRef<View, PopoverContentProps>(
-  ({ children, style, width = 200, ...props }, ref) => {
+  ({ children, style, className, width = 200, ...props }, ref) => {
     const colors = useColors();
     const { open, setOpen, triggerLayout, side, align } = usePopover();
     const [contentSize, setContentSize] = useState({ width: 0, height: 0 });
@@ -359,6 +361,7 @@ const PopoverContent = forwardRef<View, PopoverContentProps>(
           {/* Content */}
           <View
             ref={ref}
+            className={className}
             style={[
               styles.content,
               contentStyle,

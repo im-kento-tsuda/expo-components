@@ -5,17 +5,19 @@ import { cn } from '../../lib/utils';
 
 export type ButtonGroupOrientation = 'horizontal' | 'vertical';
 
-export interface ButtonGroupProps extends Omit<ViewProps, 'style'> {
+export interface ButtonGroupProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 方向 */
   orientation?: ButtonGroupOrientation;
   /** 子要素（Buttonコンポーネント） */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const ButtonGroup = forwardRef<View, ButtonGroupProps>(
-  ({ orientation = 'horizontal', children, style, ...props }, ref) => {
+  ({ orientation = 'horizontal', children, style, className, ...props }, ref) => {
     const colors = useColors();
 
     const containerStyle = cn<ViewStyle>(
@@ -65,7 +67,7 @@ const ButtonGroup = forwardRef<View, ButtonGroupProps>(
     });
 
     return (
-      <View ref={ref} style={containerStyle} {...props}>
+      <View ref={ref} className={className} style={containerStyle} {...props}>
         {enhancedChildren}
       </View>
     );

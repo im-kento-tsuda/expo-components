@@ -10,7 +10,7 @@ import {
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface SwitchProps extends Omit<PressableProps, 'style' | 'onPress'> {
+export interface SwitchProps extends Omit<PressableProps, 'style' | 'onPress' | 'className'> {
   /** スイッチの状態 */
   checked?: boolean;
   /** 状態変更時のコールバック */
@@ -19,6 +19,8 @@ export interface SwitchProps extends Omit<PressableProps, 'style' | 'onPress'> {
   disabled?: boolean;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const TRACK_WIDTH = 44;
@@ -27,7 +29,7 @@ const THUMB_SIZE = 20;
 const THUMB_MARGIN = 2;
 
 const Switch = forwardRef<View, SwitchProps>(
-  ({ checked = false, onCheckedChange, disabled = false, style, ...props }, ref) => {
+  ({ checked = false, onCheckedChange, disabled = false, style, className, ...props }, ref) => {
     const colors = useColors();
     const translateX = useRef(new Animated.Value(checked ? 1 : 0)).current;
 
@@ -57,6 +59,7 @@ const Switch = forwardRef<View, SwitchProps>(
     return (
       <Pressable
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.track,
           trackStyle,

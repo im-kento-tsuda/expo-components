@@ -8,15 +8,17 @@ import {
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface TextareaProps extends Omit<TextInputProps, 'style' | 'multiline'> {
+export interface TextareaProps extends Omit<TextInputProps, 'style' | 'multiline' | 'className'> {
   /** 最小行数 */
   minRows?: number;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Textarea = forwardRef<TextInput, TextareaProps>(
-  ({ minRows = 3, style, editable = true, ...props }, ref) => {
+  ({ minRows = 3, style, editable = true, className, ...props }, ref) => {
     const colors = useColors();
 
     const textareaStyle: TextStyle = {
@@ -31,6 +33,7 @@ const Textarea = forwardRef<TextInput, TextareaProps>(
     return (
       <TextInput
         ref={ref}
+        className={className}
         style={cn<TextStyle>(
           styles.textarea,
           textareaStyle,

@@ -15,7 +15,7 @@ import { useColors } from "../../lib/theme";
 import { cn } from "../../lib/utils";
 import { Calendar } from "../Calendar";
 
-export interface DatePickerProps extends Omit<ViewProps, "style"> {
+export interface DatePickerProps extends Omit<ViewProps, "style" | "className"> {
   /** 選択された日付 */
   value?: Date;
   /** 日付変更時のコールバック */
@@ -34,6 +34,8 @@ export interface DatePickerProps extends Omit<ViewProps, "style"> {
   toDate?: Date;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
   /** テキストのカスタムスタイル */
   textStyle?: TextStyle;
 }
@@ -57,6 +59,7 @@ const DatePicker = forwardRef<View, DatePickerProps>(
       fromDate,
       toDate,
       style,
+      className,
       textStyle,
       ...props
     },
@@ -105,6 +108,7 @@ const DatePicker = forwardRef<View, DatePickerProps>(
         <Pressable
           onPress={handleOpen}
           disabled={disabled}
+          className={className}
           style={triggerStyle}
           onLayout={handleLayout}
           {...props}

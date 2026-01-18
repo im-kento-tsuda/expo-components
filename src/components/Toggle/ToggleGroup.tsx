@@ -34,7 +34,7 @@ const useToggleGroup = () => {
   return context;
 };
 
-export interface ToggleGroupProps extends Omit<ViewProps, 'style'> {
+export interface ToggleGroupProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 選択タイプ */
   type: ToggleGroupType;
   /** 選択値 */
@@ -53,6 +53,8 @@ export interface ToggleGroupProps extends Omit<ViewProps, 'style'> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const ToggleGroup = forwardRef<View, ToggleGroupProps>(
@@ -67,6 +69,7 @@ const ToggleGroup = forwardRef<View, ToggleGroupProps>(
       disabled = false,
       children,
       style,
+      className,
       ...props
     },
     ref
@@ -96,7 +99,7 @@ const ToggleGroup = forwardRef<View, ToggleGroupProps>(
       <ToggleGroupContext.Provider
         value={{ type, value, onValueChange: handleValueChange, variant, size, disabled }}
       >
-        <View ref={ref} style={containerStyle} {...props}>
+        <View ref={ref} className={className} style={containerStyle} {...props}>
           {children}
         </View>
       </ToggleGroupContext.Provider>
@@ -106,7 +109,7 @@ const ToggleGroup = forwardRef<View, ToggleGroupProps>(
 
 ToggleGroup.displayName = 'ToggleGroup';
 
-export interface ToggleGroupItemProps extends Omit<ViewProps, 'style'> {
+export interface ToggleGroupItemProps extends Omit<ViewProps, 'style' | 'className'> {
   /** アイテムの値 */
   value: string;
   /** 無効状態 */
@@ -117,10 +120,14 @@ export interface ToggleGroupItemProps extends Omit<ViewProps, 'style'> {
   style?: ViewStyle;
   /** テキストのカスタムスタイル */
   textStyle?: TextStyle;
+  /** NativeWind className (コンテナ用) */
+  className?: string;
+  /** NativeWind className (テキスト用) */
+  textClassName?: string;
 }
 
 const ToggleGroupItem = forwardRef<View, ToggleGroupItemProps>(
-  ({ value, disabled: itemDisabled, children, style, textStyle, ...props }, ref) => {
+  ({ value, disabled: itemDisabled, children, style, textStyle, className, textClassName, ...props }, ref) => {
     const colors = useColors();
     const { type, value: groupValue, onValueChange, variant, size, disabled: groupDisabled } = useToggleGroup();
 
@@ -165,6 +172,7 @@ const ToggleGroupItem = forwardRef<View, ToggleGroupItemProps>(
     return (
       <TouchableOpacity
         ref={ref as React.Ref<TouchableOpacity>}
+        className={className}
         style={containerStyle}
         disabled={disabled}
         activeOpacity={0.7}
@@ -172,7 +180,7 @@ const ToggleGroupItem = forwardRef<View, ToggleGroupItemProps>(
         {...props}
       >
         {typeof children === 'string' ? (
-          <Text style={textStyleMerged}>{children}</Text>
+          <Text className={textClassName} style={textStyleMerged}>{children}</Text>
         ) : (
           children
         )}

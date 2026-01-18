@@ -14,7 +14,7 @@ import { cn } from '../../lib/utils';
 export type ButtonVariant = 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
 export type ButtonSize = 'default' | 'sm' | 'lg' | 'icon';
 
-export interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
+export interface ButtonProps extends Omit<TouchableOpacityProps, 'style' | 'className'> {
   /** ボタンのバリアント */
   variant?: ButtonVariant;
   /** ボタンのサイズ */
@@ -27,6 +27,10 @@ export interface ButtonProps extends Omit<TouchableOpacityProps, 'style'> {
   style?: ViewStyle;
   /** テキストのカスタムスタイル */
   textStyle?: TextStyle;
+  /** NativeWind className (コンテナ用) */
+  className?: string;
+  /** NativeWind className (テキスト用) */
+  textClassName?: string;
 }
 
 const Button = forwardRef<TouchableOpacity, ButtonProps>(
@@ -39,6 +43,8 @@ const Button = forwardRef<TouchableOpacity, ButtonProps>(
       children,
       style,
       textStyle,
+      className,
+      textClassName,
       ...props
     },
     ref
@@ -72,7 +78,7 @@ const Button = forwardRef<TouchableOpacity, ButtonProps>(
       }
 
       if (typeof children === 'string') {
-        return <Text style={textStyleMerged}>{children}</Text>;
+        return <Text className={textClassName} style={textStyleMerged}>{children}</Text>;
       }
 
       return children;
@@ -81,6 +87,7 @@ const Button = forwardRef<TouchableOpacity, ButtonProps>(
     return (
       <TouchableOpacity
         ref={ref}
+        className={className}
         style={containerStyle}
         disabled={isDisabled}
         activeOpacity={0.7}

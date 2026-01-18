@@ -32,22 +32,25 @@ export interface ChartConfig {
 }
 
 // ChartContainer
-export interface ChartContainerProps extends Omit<ViewProps, 'style'> {
+export interface ChartContainerProps extends Omit<ViewProps, 'style' | 'className'> {
   /** チャート設定 */
   config?: ChartConfig;
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const ChartContainer = forwardRef<View, ChartContainerProps>(
-  ({ config: _config, children, style, ...props }, ref) => {
+  ({ config: _config, children, style, className, ...props }, ref) => {
     const colors = useColors();
 
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.container,
           { backgroundColor: colors.card, borderColor: colors.border },
@@ -118,13 +121,15 @@ export interface ChartLegendProps {
   data: ChartDataPoint[];
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
-const ChartLegend: React.FC<ChartLegendProps> = ({ data, style }) => {
+const ChartLegend: React.FC<ChartLegendProps> = ({ data, style, className }) => {
   const colors = useColors();
 
   return (
-    <View style={[styles.legend, style]}>
+    <View className={className} style={[styles.legend, style]}>
       {data.map((item, index) => (
         <View key={index} style={styles.legendItem}>
           <View
@@ -164,6 +169,8 @@ export interface BarChartProps {
   showGrid?: boolean;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const BarChart: React.FC<BarChartProps> = ({
@@ -176,6 +183,7 @@ const BarChart: React.FC<BarChartProps> = ({
   showYLabels = true,
   showGrid = true,
   style,
+  className,
 }) => {
   const colors = useColors();
   const padding = { top: 20, right: 20, bottom: 40, left: 50 };
@@ -189,7 +197,7 @@ const BarChart: React.FC<BarChartProps> = ({
   const gridLines = [0, 0.25, 0.5, 0.75, 1].map((ratio) => maxValue * ratio);
 
   return (
-    <View style={style}>
+    <View className={className} style={style}>
       <Svg width={width} height={height}>
         <G x={padding.left} y={padding.top}>
           {/* グリッド線 */}
@@ -296,6 +304,8 @@ export interface LineChartProps {
   showGrid?: boolean;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const LineChart: React.FC<LineChartProps> = ({
@@ -310,6 +320,7 @@ const LineChart: React.FC<LineChartProps> = ({
   showYLabels = true,
   showGrid = true,
   style,
+  className,
 }) => {
   const colors = useColors();
   const strokeColor = lineColor || colors.primary;
@@ -344,7 +355,7 @@ const LineChart: React.FC<LineChartProps> = ({
   );
 
   return (
-    <View style={style}>
+    <View className={className} style={style}>
       <Svg width={width} height={height}>
         <G x={padding.left} y={padding.top}>
           {/* グリッド線 */}
@@ -448,6 +459,8 @@ export interface PieChartProps {
   showValues?: boolean;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const PieChart: React.FC<PieChartProps> = ({
@@ -457,6 +470,7 @@ const PieChart: React.FC<PieChartProps> = ({
   showLabels = false,
   showValues = false,
   style,
+  className,
 }) => {
   const colors = useColors();
   const defaultColors = [
@@ -534,7 +548,7 @@ const PieChart: React.FC<PieChartProps> = ({
   });
 
   return (
-    <View style={style}>
+    <View className={className} style={style}>
       <Svg width={size} height={size}>
         {segments.map((segment, index) => (
           <G key={index}>

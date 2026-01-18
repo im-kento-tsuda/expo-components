@@ -111,15 +111,17 @@ const TooltipTrigger: React.FC<TooltipTriggerProps> = ({ children, asChild }) =>
 
 TooltipTrigger.displayName = 'TooltipTrigger';
 
-export interface TooltipContentProps extends Omit<ViewProps, 'style'> {
+export interface TooltipContentProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const TooltipContent = forwardRef<View, TooltipContentProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className: _className, ...props }, ref) => {
     const colors = useColors();
     const { open, triggerLayout } = useTooltip();
     const opacity = useRef(new Animated.Value(0)).current;

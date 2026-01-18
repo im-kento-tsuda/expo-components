@@ -3,15 +3,17 @@ import { Text, StyleSheet, type TextStyle, type TextProps } from 'react-native';
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface TableHeadProps extends Omit<TextProps, 'style'> {
+export interface TableHeadProps extends Omit<TextProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const TableHead = forwardRef<Text, TableHeadProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const colors = useColors();
 
     const headStyle: TextStyle = {
@@ -19,7 +21,7 @@ const TableHead = forwardRef<Text, TableHeadProps>(
     };
 
     return (
-      <Text ref={ref} style={cn<TextStyle>(styles.head, headStyle, style)} {...props}>
+      <Text ref={ref} className={className} style={cn<TextStyle>(styles.head, headStyle, style)} {...props}>
         {children}
       </Text>
     );

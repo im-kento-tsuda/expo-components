@@ -12,15 +12,17 @@ import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 import { useSelect } from './Select';
 
-export interface SelectContentProps extends Omit<ViewProps, 'style'> {
+export interface SelectContentProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const SelectContent = forwardRef<View, SelectContentProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const colors = useColors();
     const { open, setOpen } = useSelect();
 
@@ -45,6 +47,7 @@ const SelectContent = forwardRef<View, SelectContentProps>(
             <Pressable onPress={(e) => e.stopPropagation()}>
               <View
                 ref={ref}
+                className={className}
                 style={cn<ViewStyle>(styles.content, contentStyle, style)}
                 {...props}
               >

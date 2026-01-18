@@ -17,7 +17,7 @@ const FieldContext = createContext<FieldContextType>({
 
 export const useField = () => useContext(FieldContext);
 
-export interface FieldProps extends Omit<ViewProps, 'style'> {
+export interface FieldProps extends Omit<ViewProps, 'style' | 'className'> {
   /** フィールドの一意なID */
   id?: string;
   /** エラーメッセージ */
@@ -30,16 +30,18 @@ export interface FieldProps extends Omit<ViewProps, 'style'> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Field = forwardRef<View, FieldProps>(
-  ({ id: customId, error, disabled = false, required = false, children, style, ...props }, ref) => {
+  ({ id: customId, error, disabled = false, required = false, children, style, className, ...props }, ref) => {
     const generatedId = useId();
     const id = customId || generatedId;
 
     return (
       <FieldContext.Provider value={{ id, error, disabled, required }}>
-        <View ref={ref} style={[styles.field, style]} {...props}>
+        <View ref={ref} className={className} style={[styles.field, style]} {...props}>
           {children}
         </View>
       </FieldContext.Provider>

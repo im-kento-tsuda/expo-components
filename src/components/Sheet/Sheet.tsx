@@ -116,15 +116,17 @@ SheetTrigger.displayName = "SheetTrigger";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
-export interface SheetContentProps extends Omit<ViewProps, "style"> {
+export interface SheetContentProps extends Omit<ViewProps, "style" | "className"> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const SheetContent = forwardRef<View, SheetContentProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const colors = useColors();
     const { open, setOpen, side } = useSheet();
 
@@ -441,6 +443,7 @@ const SheetContent = forwardRef<View, SheetContentProps>(
             {/* Sheet Content */}
             <Animated.View
               ref={ref as React.Ref<View>}
+              className={className}
               style={[
                 styles.contentBase,
                 contentStyle,

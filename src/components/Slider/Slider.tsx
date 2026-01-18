@@ -11,7 +11,7 @@ import {
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface SliderProps extends Omit<ViewProps, 'style'> {
+export interface SliderProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 現在の値 */
   value?: number;
   /** 値変更時のコールバック */
@@ -26,6 +26,8 @@ export interface SliderProps extends Omit<ViewProps, 'style'> {
   disabled?: boolean;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const THUMB_SIZE = 24;
@@ -42,6 +44,7 @@ const Slider = forwardRef<View, SliderProps>(
       step = 1,
       disabled = false,
       style,
+      className,
       ...props
     },
     ref
@@ -143,6 +146,7 @@ const Slider = forwardRef<View, SliderProps>(
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(styles.container, disabled && styles.disabled, style)}
         {...props}
       >

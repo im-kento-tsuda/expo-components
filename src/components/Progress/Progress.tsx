@@ -9,7 +9,7 @@ import {
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface ProgressProps extends Omit<ViewProps, 'style'> {
+export interface ProgressProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 進捗値（0-100） */
   value?: number;
   /** 最大値 */
@@ -18,12 +18,14 @@ export interface ProgressProps extends Omit<ViewProps, 'style'> {
   indeterminate?: boolean;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const TRACK_HEIGHT = 8;
 
 const Progress = forwardRef<View, ProgressProps>(
-  ({ value = 0, max = 100, indeterminate = false, style, ...props }, ref) => {
+  ({ value = 0, max = 100, indeterminate = false, style, className, ...props }, ref) => {
     const colors = useColors();
     const animatedValue = useRef(new Animated.Value(0)).current;
     const indeterminateAnim = useRef(new Animated.Value(0)).current;
@@ -90,6 +92,7 @@ const Progress = forwardRef<View, ProgressProps>(
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(styles.track, trackStyle, style)}
         {...props}
       >

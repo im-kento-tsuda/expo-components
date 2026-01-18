@@ -3,7 +3,7 @@ import { View, type ViewStyle, type ViewProps } from 'react-native';
 import { Field } from '../Field';
 import { useForm } from './Form';
 
-export interface FormFieldProps extends Omit<ViewProps, 'style'> {
+export interface FormFieldProps extends Omit<ViewProps, 'style' | 'className'> {
   /** フィールド名（エラーのキー） */
   name: string;
   /** 無効状態 */
@@ -14,10 +14,12 @@ export interface FormFieldProps extends Omit<ViewProps, 'style'> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const FormField = forwardRef<View, FormFieldProps>(
-  ({ name, disabled = false, required = false, children, style, ...props }, ref) => {
+  ({ name, disabled = false, required = false, children, style, className, ...props }, ref) => {
     const { errors, isSubmitting } = useForm();
     const error = errors[name];
 
@@ -28,6 +30,7 @@ const FormField = forwardRef<View, FormFieldProps>(
         error={error}
         disabled={disabled || isSubmitting}
         required={required}
+        className={className}
         style={style}
         {...props}
       >

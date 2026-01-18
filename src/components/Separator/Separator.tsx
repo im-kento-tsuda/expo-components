@@ -5,15 +5,17 @@ import { cn } from '../../lib/utils';
 
 export type SeparatorOrientation = 'horizontal' | 'vertical';
 
-export interface SeparatorProps extends Omit<ViewProps, 'style'> {
+export interface SeparatorProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 区切り線の向き */
   orientation?: SeparatorOrientation;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Separator = forwardRef<View, SeparatorProps>(
-  ({ orientation = 'horizontal', style, ...props }, ref) => {
+  ({ orientation = 'horizontal', style, className, ...props }, ref) => {
     const colors = useColors();
 
     const separatorStyle: ViewStyle = {
@@ -26,6 +28,7 @@ const Separator = forwardRef<View, SeparatorProps>(
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(styles.base, orientationStyle, separatorStyle, style)}
         {...props}
       />

@@ -13,7 +13,7 @@ import { cn } from '../../lib/utils';
 export type ToggleVariant = 'default' | 'outline';
 export type ToggleSize = 'default' | 'sm' | 'lg';
 
-export interface ToggleProps extends Omit<TouchableOpacityProps, 'style'> {
+export interface ToggleProps extends Omit<TouchableOpacityProps, 'style' | 'className'> {
   /** 押下状態 */
   pressed?: boolean;
   /** 押下状態変更時のコールバック */
@@ -28,6 +28,10 @@ export interface ToggleProps extends Omit<TouchableOpacityProps, 'style'> {
   style?: ViewStyle;
   /** テキストのカスタムスタイル */
   textStyle?: TextStyle;
+  /** NativeWind className (コンテナ用) */
+  className?: string;
+  /** NativeWind className (テキスト用) */
+  textClassName?: string;
 }
 
 const Toggle = forwardRef<TouchableOpacity, ToggleProps>(
@@ -41,6 +45,8 @@ const Toggle = forwardRef<TouchableOpacity, ToggleProps>(
       children,
       style,
       textStyle,
+      className,
+      textClassName,
       onPress,
       ...props
     },
@@ -73,7 +79,7 @@ const Toggle = forwardRef<TouchableOpacity, ToggleProps>(
 
     const renderContent = () => {
       if (typeof children === 'string') {
-        return <Text style={textStyleMerged}>{children}</Text>;
+        return <Text className={textClassName} style={textStyleMerged}>{children}</Text>;
       }
       return children;
     };
@@ -81,6 +87,7 @@ const Toggle = forwardRef<TouchableOpacity, ToggleProps>(
     return (
       <TouchableOpacity
         ref={ref}
+        className={className}
         style={containerStyle}
         disabled={disabled}
         activeOpacity={0.7}

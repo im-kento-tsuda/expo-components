@@ -35,17 +35,19 @@ const useNavigationMenu = () => {
 };
 
 // NavigationMenu
-export interface NavigationMenuProps extends Omit<ViewProps, 'style'> {
+export interface NavigationMenuProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 方向 */
   orientation?: 'horizontal' | 'vertical';
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const NavigationMenu = forwardRef<View, NavigationMenuProps>(
-  ({ orientation = 'horizontal', children, style, ...props }, ref) => {
+  ({ orientation = 'horizontal', children, style, className, ...props }, ref) => {
     const [activeItem, setActiveItem] = useState<string | null>(null);
     const colors = useColors();
 
@@ -53,6 +55,7 @@ const NavigationMenu = forwardRef<View, NavigationMenuProps>(
       <NavigationMenuContext.Provider value={{ activeItem, setActiveItem, orientation }}>
         <View
           ref={ref}
+          className={className}
           style={cn<ViewStyle>(
             styles.menu,
             orientation === 'horizontal' ? styles.menuHorizontal : styles.menuVertical,
@@ -71,20 +74,23 @@ const NavigationMenu = forwardRef<View, NavigationMenuProps>(
 NavigationMenu.displayName = 'NavigationMenu';
 
 // NavigationMenuList
-export interface NavigationMenuListProps extends Omit<ViewProps, 'style'> {
+export interface NavigationMenuListProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const NavigationMenuList = forwardRef<View, NavigationMenuListProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const { orientation } = useNavigationMenu();
 
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.list,
           orientation === 'horizontal' ? styles.listHorizontal : styles.listVertical,
@@ -101,23 +107,26 @@ const NavigationMenuList = forwardRef<View, NavigationMenuListProps>(
 NavigationMenuList.displayName = 'NavigationMenuList';
 
 // NavigationMenuItem
-export interface NavigationMenuItemProps extends Omit<ViewProps, 'style'> {
+export interface NavigationMenuItemProps extends Omit<ViewProps, 'style' | 'className'> {
   /** アイテムの識別子 */
   value?: string;
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const NavigationMenuItem = forwardRef<View, NavigationMenuItemProps>(
-  ({ value, children, style, ...props }, ref) => {
+  ({ value, children, style, className, ...props }, ref) => {
     const { activeItem } = useNavigationMenu();
     const isActive = activeItem === value;
 
     return (
       <View
         ref={ref}
+        className={className}
         style={[
           styles.item,
           isActive && styles.itemActive,
@@ -141,6 +150,8 @@ export interface NavigationMenuTriggerProps {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
   /** テキストスタイル */
   textStyle?: TextStyle;
 }
@@ -149,6 +160,7 @@ const NavigationMenuTrigger: React.FC<NavigationMenuTriggerProps> = ({
   value,
   children,
   style,
+  className,
   textStyle,
 }) => {
   const colors = useColors();
@@ -164,6 +176,7 @@ const NavigationMenuTrigger: React.FC<NavigationMenuTriggerProps> = ({
   return (
     <Pressable
       onPress={handlePress}
+      className={className}
       style={cn<ViewStyle>(styles.trigger, triggerStyles.container, style)}
     >
       {typeof children === 'string' ? (
@@ -183,17 +196,19 @@ const NavigationMenuTrigger: React.FC<NavigationMenuTriggerProps> = ({
 NavigationMenuTrigger.displayName = 'NavigationMenuTrigger';
 
 // NavigationMenuContent
-export interface NavigationMenuContentProps extends Omit<ViewProps, 'style'> {
+export interface NavigationMenuContentProps extends Omit<ViewProps, 'style' | 'className'> {
   /** コンテンツの値（トリガーと一致させる） */
   value: string;
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const NavigationMenuContent = forwardRef<View, NavigationMenuContentProps>(
-  ({ value, children, style, ...props }, ref) => {
+  ({ value, children, style, className, ...props }, ref) => {
     const colors = useColors();
     const { activeItem } = useNavigationMenu();
     const isVisible = activeItem === value;
@@ -203,6 +218,7 @@ const NavigationMenuContent = forwardRef<View, NavigationMenuContentProps>(
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.content,
           {
@@ -233,6 +249,8 @@ export interface NavigationMenuLinkProps {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
   /** テキストスタイル */
   textStyle?: TextStyle;
 }
@@ -243,6 +261,7 @@ const NavigationMenuLink: React.FC<NavigationMenuLinkProps> = ({
   disabled = false,
   children,
   style,
+  className,
   textStyle,
 }) => {
   const colors = useColors();
@@ -260,6 +279,7 @@ const NavigationMenuLink: React.FC<NavigationMenuLinkProps> = ({
     <Pressable
       onPress={handlePress}
       disabled={disabled}
+      className={className}
       style={cn<ViewStyle>(
         styles.link,
         linkStyles.container,
@@ -281,18 +301,21 @@ const NavigationMenuLink: React.FC<NavigationMenuLinkProps> = ({
 NavigationMenuLink.displayName = 'NavigationMenuLink';
 
 // NavigationMenuIndicator
-export interface NavigationMenuIndicatorProps extends Omit<ViewProps, 'style'> {
+export interface NavigationMenuIndicatorProps extends Omit<ViewProps, 'style' | 'className'> {
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const NavigationMenuIndicator = forwardRef<View, NavigationMenuIndicatorProps>(
-  ({ style, ...props }, ref) => {
+  ({ style, className, ...props }, ref) => {
     const colors = useColors();
 
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.indicator,
           { backgroundColor: colors.primary },
@@ -307,20 +330,23 @@ const NavigationMenuIndicator = forwardRef<View, NavigationMenuIndicatorProps>(
 NavigationMenuIndicator.displayName = 'NavigationMenuIndicator';
 
 // NavigationMenuViewport (コンテンツ表示エリア)
-export interface NavigationMenuViewportProps extends Omit<ViewProps, 'style'> {
+export interface NavigationMenuViewportProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children?: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const NavigationMenuViewport = forwardRef<View, NavigationMenuViewportProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const colors = useColors();
 
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.viewport,
           {

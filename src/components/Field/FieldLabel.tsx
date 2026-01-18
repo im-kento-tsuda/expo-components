@@ -4,15 +4,17 @@ import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 import { useField } from './Field';
 
-export interface FieldLabelProps extends Omit<TextProps, 'style'> {
+export interface FieldLabelProps extends Omit<TextProps, 'style' | 'className'> {
   /** ラベルのテキスト */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const FieldLabel = forwardRef<Text, FieldLabelProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const colors = useColors();
     const { disabled, required } = useField();
 
@@ -23,6 +25,7 @@ const FieldLabel = forwardRef<Text, FieldLabelProps>(
     return (
       <Text
         ref={ref}
+        className={className}
         style={cn<TextStyle>(styles.label, labelStyle, style)}
         {...props}
       >

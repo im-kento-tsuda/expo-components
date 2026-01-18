@@ -85,15 +85,17 @@ const DialogTrigger: React.FC<DialogTriggerProps> = ({ children, asChild }) => {
 
 DialogTrigger.displayName = 'DialogTrigger';
 
-export interface DialogContentProps extends Omit<ViewProps, 'style'> {
+export interface DialogContentProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const DialogContent = forwardRef<View, DialogContentProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const colors = useColors();
     const { open, setOpen } = useDialog();
 
@@ -113,6 +115,7 @@ const DialogContent = forwardRef<View, DialogContentProps>(
           <Pressable onPress={(e) => e.stopPropagation()}>
             <View
               ref={ref}
+              className={className}
               style={cn<ViewStyle>(styles.content, contentStyle, style)}
               {...props}
             >

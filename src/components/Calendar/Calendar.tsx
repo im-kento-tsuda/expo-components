@@ -10,7 +10,7 @@ import {
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface CalendarProps extends Omit<ViewProps, 'style'> {
+export interface CalendarProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 選択された日付 */
   selected?: Date;
   /** 日付選択時のコールバック */
@@ -27,6 +27,8 @@ export interface CalendarProps extends Omit<ViewProps, 'style'> {
   toDate?: Date;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const DAYS_OF_WEEK = ['日', '月', '火', '水', '木', '金', '土'];
@@ -46,6 +48,7 @@ const Calendar = forwardRef<View, CalendarProps>(
       fromDate,
       toDate,
       style,
+      className,
       ...props
     },
     ref
@@ -134,7 +137,7 @@ const Calendar = forwardRef<View, CalendarProps>(
     );
 
     return (
-      <View ref={ref} style={containerStyle} {...props}>
+      <View ref={ref} className={className} style={containerStyle} {...props}>
         {/* Header */}
         <View style={styles.header}>
           <Pressable

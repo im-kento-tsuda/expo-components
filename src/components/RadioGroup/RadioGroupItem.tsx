@@ -10,17 +10,19 @@ import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 import { useRadioGroup } from './RadioGroup';
 
-export interface RadioGroupItemProps extends Omit<PressableProps, 'style' | 'onPress'> {
+export interface RadioGroupItemProps extends Omit<PressableProps, 'style' | 'onPress' | 'className'> {
   /** ラジオボタンの値 */
   value: string;
   /** 無効状態（RadioGroupのdisabledより優先） */
   disabled?: boolean;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const RadioGroupItem = forwardRef<View, RadioGroupItemProps>(
-  ({ value, disabled: itemDisabled, style, ...props }, ref) => {
+  ({ value, disabled: itemDisabled, style, className, ...props }, ref) => {
     const colors = useColors();
     const { value: groupValue, onValueChange, disabled: groupDisabled } = useRadioGroup();
 
@@ -40,6 +42,7 @@ const RadioGroupItem = forwardRef<View, RadioGroupItemProps>(
     return (
       <Pressable
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.radio,
           radioStyle,

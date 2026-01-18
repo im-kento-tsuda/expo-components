@@ -5,13 +5,15 @@ import { cn } from '../../lib/utils';
 
 type AlertVariant = 'default' | 'destructive';
 
-export interface AlertProps extends Omit<ViewProps, 'style'> {
+export interface AlertProps extends Omit<ViewProps, 'style' | 'className'> {
   /** バリアント */
   variant?: AlertVariant;
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 function getVariantStyles(colors: ThemeColors): Record<AlertVariant, ViewStyle> {
@@ -28,13 +30,14 @@ function getVariantStyles(colors: ThemeColors): Record<AlertVariant, ViewStyle> 
 }
 
 const Alert = forwardRef<View, AlertProps>(
-  ({ variant = 'default', children, style, ...props }, ref) => {
+  ({ variant = 'default', children, style, className, ...props }, ref) => {
     const colors = useColors();
     const variantStyles = getVariantStyles(colors);
 
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(styles.alert, variantStyles[variant], style)}
         {...props}
       >

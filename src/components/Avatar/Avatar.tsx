@@ -5,13 +5,15 @@ import { cn } from '../../lib/utils';
 
 export type AvatarSize = 'sm' | 'default' | 'lg';
 
-export interface AvatarProps extends Omit<ViewProps, 'style'> {
+export interface AvatarProps extends Omit<ViewProps, 'style' | 'className'> {
   /** アバターのサイズ */
   size?: AvatarSize;
   /** 子要素（AvatarImage, AvatarFallback） */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const sizeMap: Record<AvatarSize, number> = {
@@ -21,7 +23,7 @@ const sizeMap: Record<AvatarSize, number> = {
 };
 
 const Avatar = forwardRef<View, AvatarProps>(
-  ({ size = 'default', children, style, ...props }, ref) => {
+  ({ size = 'default', children, style, className, ...props }, ref) => {
     const colors = useColors();
     const avatarSize = sizeMap[size];
 
@@ -34,6 +36,7 @@ const Avatar = forwardRef<View, AvatarProps>(
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(styles.avatar, avatarStyle, style)}
         {...props}
       >

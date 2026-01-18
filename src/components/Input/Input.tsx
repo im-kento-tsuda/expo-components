@@ -8,13 +8,15 @@ import {
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface InputProps extends Omit<TextInputProps, 'style'> {
+export interface InputProps extends Omit<TextInputProps, 'style' | 'className'> {
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Input = forwardRef<TextInput, InputProps>(
-  ({ style, editable = true, ...props }, ref) => {
+  ({ style, editable = true, className, ...props }, ref) => {
     const colors = useColors();
 
     const inputStyle: TextStyle = {
@@ -28,6 +30,7 @@ const Input = forwardRef<TextInput, InputProps>(
     return (
       <TextInput
         ref={ref}
+        className={className}
         style={cn<TextStyle>(
           styles.input,
           inputStyle,

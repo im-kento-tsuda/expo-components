@@ -2,19 +2,21 @@ import React, { forwardRef } from 'react';
 import { View, StyleSheet, type ViewStyle, type ViewProps } from 'react-native';
 import { cn } from '../../lib/utils';
 
-export interface AspectRatioProps extends Omit<ViewProps, 'style'> {
+export interface AspectRatioProps extends Omit<ViewProps, 'style' | 'className'> {
   /** アスペクト比（幅/高さ） */
   ratio?: number;
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const AspectRatio = forwardRef<View, AspectRatioProps>(
-  ({ ratio = 1, children, style, ...props }, ref) => {
+  ({ ratio = 1, children, style, className, ...props }, ref) => {
     return (
-      <View ref={ref} style={cn<ViewStyle>(styles.container, style)} {...props}>
+      <View ref={ref} className={className} style={cn<ViewStyle>(styles.container, style)} {...props}>
         <View style={[styles.inner, { aspectRatio: ratio }]}>
           {children}
         </View>

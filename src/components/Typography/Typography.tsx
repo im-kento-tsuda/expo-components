@@ -14,17 +14,19 @@ export type TypographyVariant =
   | 'small'
   | 'muted';
 
-export interface TypographyProps extends Omit<TextProps, 'style'> {
+export interface TypographyProps extends Omit<TextProps, 'style' | 'className'> {
   /** テキストバリアント */
   variant?: TypographyVariant;
   /** テキストの内容 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Typography = forwardRef<Text, TypographyProps>(
-  ({ variant = 'p', children, style, ...props }, ref) => {
+  ({ variant = 'p', children, style, className, ...props }, ref) => {
     const colors = useColors();
 
     const colorStyle: TextStyle = {
@@ -34,6 +36,7 @@ const Typography = forwardRef<Text, TypographyProps>(
     return (
       <Text
         ref={ref}
+        className={className}
         style={cn<TextStyle>(variantStyles[variant], colorStyle, style)}
         {...props}
       >

@@ -4,15 +4,17 @@ import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 import { useSelect } from './Select';
 
-export interface SelectValueProps extends Omit<TextProps, 'style'> {
+export interface SelectValueProps extends Omit<TextProps, 'style' | 'className'> {
   /** プレースホルダー */
   placeholder?: string;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const SelectValue = forwardRef<Text, SelectValueProps>(
-  ({ placeholder, style, ...props }, ref) => {
+  ({ placeholder, style, className, ...props }, ref) => {
     const colors = useColors();
     const { value } = useSelect();
 
@@ -25,6 +27,7 @@ const SelectValue = forwardRef<Text, SelectValueProps>(
     return (
       <Text
         ref={ref}
+        className={className}
         style={cn<TextStyle>(styles.text, textStyle, style)}
         numberOfLines={1}
         {...props}

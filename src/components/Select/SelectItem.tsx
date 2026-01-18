@@ -11,7 +11,7 @@ import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 import { useSelect } from './Select';
 
-export interface SelectItemProps extends Omit<PressableProps, 'style' | 'onPress'> {
+export interface SelectItemProps extends Omit<PressableProps, 'style' | 'onPress' | 'className'> {
   /** アイテムの値 */
   value: string;
   /** 無効状態 */
@@ -20,10 +20,14 @@ export interface SelectItemProps extends Omit<PressableProps, 'style' | 'onPress
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
+  /** NativeWind textClassName */
+  textClassName?: string;
 }
 
 const SelectItem = forwardRef<View, SelectItemProps>(
-  ({ value, disabled = false, children, style, ...props }, ref) => {
+  ({ value, disabled = false, children, style, className, textClassName, ...props }, ref) => {
     const colors = useColors();
     const { value: selectedValue, onValueChange, setOpen } = useSelect();
 
@@ -43,6 +47,7 @@ const SelectItem = forwardRef<View, SelectItemProps>(
     return (
       <Pressable
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.item,
           itemStyle,
@@ -59,6 +64,7 @@ const SelectItem = forwardRef<View, SelectItemProps>(
           )}
         </View>
         <Text
+          className={textClassName}
           style={[
             styles.text,
             { color: disabled ? colors.mutedForeground : colors.foreground },

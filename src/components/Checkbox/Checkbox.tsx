@@ -10,7 +10,7 @@ import {
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface CheckboxProps extends Omit<PressableProps, 'style' | 'onPress'> {
+export interface CheckboxProps extends Omit<PressableProps, 'style' | 'onPress' | 'className'> {
   /** チェック状態 */
   checked?: boolean;
   /** 状態変更時のコールバック */
@@ -19,10 +19,12 @@ export interface CheckboxProps extends Omit<PressableProps, 'style' | 'onPress'>
   disabled?: boolean;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Checkbox = forwardRef<View, CheckboxProps>(
-  ({ checked = false, onCheckedChange, disabled = false, style, ...props }, ref) => {
+  ({ checked = false, onCheckedChange, disabled = false, style, className, ...props }, ref) => {
     const colors = useColors();
 
     const handlePress = () => {
@@ -39,6 +41,7 @@ const Checkbox = forwardRef<View, CheckboxProps>(
     return (
       <Pressable
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.checkbox,
           boxStyle,

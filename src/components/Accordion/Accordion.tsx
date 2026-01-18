@@ -19,7 +19,7 @@ const AccordionContext = createContext<AccordionContextType>({
 
 export const useAccordion = () => useContext(AccordionContext);
 
-export interface AccordionProps extends Omit<ViewProps, 'style'> {
+export interface AccordionProps extends Omit<ViewProps, 'style' | 'className'> {
   /** アコーディオンのタイプ */
   type?: AccordionType;
   /** 選択中の値（single: string | undefined, multiple: string[]） */
@@ -34,6 +34,8 @@ export interface AccordionProps extends Omit<ViewProps, 'style'> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Accordion = forwardRef<View, AccordionProps>(
@@ -46,6 +48,7 @@ const Accordion = forwardRef<View, AccordionProps>(
       collapsible = true,
       children,
       style,
+      className,
       ...props
     },
     ref
@@ -103,7 +106,7 @@ const Accordion = forwardRef<View, AccordionProps>(
       <AccordionContext.Provider
         value={{ type, value, onValueChange: handleValueChange, collapsible }}
       >
-        <View ref={ref} style={[styles.accordion, style]} {...props}>
+        <View ref={ref} className={className} style={[styles.accordion, style]} {...props}>
           {children}
         </View>
       </AccordionContext.Provider>

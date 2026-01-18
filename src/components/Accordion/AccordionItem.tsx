@@ -16,7 +16,7 @@ const AccordionItemContext = createContext<AccordionItemContextType>({
 
 export const useAccordionItem = () => useContext(AccordionItemContext);
 
-export interface AccordionItemProps extends Omit<ViewProps, 'style'> {
+export interface AccordionItemProps extends Omit<ViewProps, 'style' | 'className'> {
   /** アイテムの値 */
   value: string;
   /** 無効状態 */
@@ -25,10 +25,12 @@ export interface AccordionItemProps extends Omit<ViewProps, 'style'> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const AccordionItem = forwardRef<View, AccordionItemProps>(
-  ({ value, disabled = false, children, style, ...props }, ref) => {
+  ({ value, disabled = false, children, style, className, ...props }, ref) => {
     const colors = useColors();
     const { value: selectedValues } = useAccordion();
     const isOpen = selectedValues.includes(value);
@@ -41,6 +43,7 @@ const AccordionItem = forwardRef<View, AccordionItemProps>(
       <AccordionItemContext.Provider value={{ value, isOpen }}>
         <View
           ref={ref}
+          className={className}
           style={cn<ViewStyle>(styles.item, itemStyle, disabled && styles.disabled, style)}
           {...props}
         >

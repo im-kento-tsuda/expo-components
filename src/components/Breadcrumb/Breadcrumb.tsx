@@ -11,19 +11,21 @@ import {
 import { useColors } from '../../lib/theme';
 
 // Breadcrumb
-export interface BreadcrumbProps extends Omit<ViewProps, 'style'> {
+export interface BreadcrumbProps extends Omit<ViewProps, 'style' | 'className'> {
   /** セパレーター */
   separator?: React.ReactNode;
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Breadcrumb = forwardRef<View, BreadcrumbProps>(
-  ({ separator, children, style, ...props }, ref) => {
+  ({ separator, children, style, className, ...props }, ref) => {
     return (
-      <View ref={ref} style={[styles.breadcrumb, style]} accessibilityRole="none" {...props}>
+      <View ref={ref} className={className} style={[styles.breadcrumb, style]} accessibilityRole="none" {...props}>
         <BreadcrumbList separator={separator}>{children}</BreadcrumbList>
       </View>
     );
@@ -33,22 +35,24 @@ const Breadcrumb = forwardRef<View, BreadcrumbProps>(
 Breadcrumb.displayName = 'Breadcrumb';
 
 // BreadcrumbList
-export interface BreadcrumbListProps extends Omit<ViewProps, 'style'> {
+export interface BreadcrumbListProps extends Omit<ViewProps, 'style' | 'className'> {
   /** セパレーター */
   separator?: React.ReactNode;
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const BreadcrumbList = forwardRef<View, BreadcrumbListProps>(
-  ({ separator, children, style, ...props }, ref) => {
+  ({ separator, children, style, className, ...props }, ref) => {
     const colors = useColors();
     const childArray = Children.toArray(children).filter(isValidElement);
 
     return (
-      <View ref={ref} style={[styles.list, style]} {...props}>
+      <View ref={ref} className={className} style={[styles.list, style]} {...props}>
         {childArray.map((child, index) => (
           <React.Fragment key={index}>
             {child}
@@ -69,17 +73,19 @@ const BreadcrumbList = forwardRef<View, BreadcrumbListProps>(
 BreadcrumbList.displayName = 'BreadcrumbList';
 
 // BreadcrumbItem
-export interface BreadcrumbItemProps extends Omit<ViewProps, 'style'> {
+export interface BreadcrumbItemProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const BreadcrumbItem = forwardRef<View, BreadcrumbItemProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     return (
-      <View ref={ref} style={[styles.item, style]} {...props}>
+      <View ref={ref} className={className} style={[styles.item, style]} {...props}>
         {children}
       </View>
     );
@@ -98,6 +104,8 @@ export interface BreadcrumbLinkProps {
   style?: TextStyle;
   /** asChild - 子要素をそのまま使用 */
   asChild?: boolean;
+  /** NativeWind className */
+  className?: string;
 }
 
 const BreadcrumbLink: React.FC<BreadcrumbLinkProps> = ({
@@ -105,6 +113,7 @@ const BreadcrumbLink: React.FC<BreadcrumbLinkProps> = ({
   children,
   style,
   asChild,
+  className,
 }) => {
   const colors = useColors();
 
@@ -115,7 +124,7 @@ const BreadcrumbLink: React.FC<BreadcrumbLinkProps> = ({
   }
 
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={onPress} className={className}>
       {({ pressed }) => (
         <Text
           style={[
@@ -140,13 +149,16 @@ export interface BreadcrumbPageProps {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
-const BreadcrumbPage: React.FC<BreadcrumbPageProps> = ({ children, style }) => {
+const BreadcrumbPage: React.FC<BreadcrumbPageProps> = ({ children, style, className }) => {
   const colors = useColors();
 
   return (
     <Text
+      className={className}
       style={[styles.page, { color: colors.foreground }, style]}
       accessibilityRole="text"
     >
@@ -158,19 +170,21 @@ const BreadcrumbPage: React.FC<BreadcrumbPageProps> = ({ children, style }) => {
 BreadcrumbPage.displayName = 'BreadcrumbPage';
 
 // BreadcrumbSeparator
-export interface BreadcrumbSeparatorProps extends Omit<ViewProps, 'style'> {
+export interface BreadcrumbSeparatorProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children?: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const BreadcrumbSeparator = forwardRef<View, BreadcrumbSeparatorProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const colors = useColors();
 
     return (
-      <View ref={ref} style={[styles.separator, style]} accessibilityRole="none" {...props}>
+      <View ref={ref} className={className} style={[styles.separator, style]} accessibilityRole="none" {...props}>
         {children || (
           <Text style={[styles.separatorText, { color: colors.mutedForeground }]}>/</Text>
         )}
@@ -187,13 +201,15 @@ export interface BreadcrumbEllipsisProps {
   onPress?: () => void;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
-const BreadcrumbEllipsis: React.FC<BreadcrumbEllipsisProps> = ({ onPress, style }) => {
+const BreadcrumbEllipsis: React.FC<BreadcrumbEllipsisProps> = ({ onPress, style, className }) => {
   const colors = useColors();
 
   return (
-    <Pressable onPress={onPress} style={styles.ellipsisContainer}>
+    <Pressable onPress={onPress} className={className} style={styles.ellipsisContainer}>
       <Text style={[styles.ellipsis, { color: colors.mutedForeground }, style]}>...</Text>
     </Pressable>
   );

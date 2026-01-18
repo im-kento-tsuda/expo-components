@@ -3,17 +3,21 @@ import { View, Text, StyleSheet, type ViewStyle, type TextStyle, type ViewProps 
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface AvatarFallbackProps extends Omit<ViewProps, 'style'> {
+export interface AvatarFallbackProps extends Omit<ViewProps, 'style' | 'className'> {
   /** フォールバックの内容（通常はイニシャル） */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
   /** テキストのカスタムスタイル */
   textStyle?: TextStyle;
+  /** NativeWind className (コンテナ用) */
+  className?: string;
+  /** NativeWind className (テキスト用) */
+  textClassName?: string;
 }
 
 const AvatarFallback = forwardRef<View, AvatarFallbackProps>(
-  ({ children, style, textStyle, ...props }, ref) => {
+  ({ children, style, textStyle, className, textClassName, ...props }, ref) => {
     const colors = useColors();
 
     const fallbackStyle: ViewStyle = {
@@ -27,11 +31,12 @@ const AvatarFallback = forwardRef<View, AvatarFallbackProps>(
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(styles.fallback, fallbackStyle, style)}
         {...props}
       >
         {typeof children === 'string' ? (
-          <Text style={cn<TextStyle>(styles.text, textColorStyle, textStyle)}>
+          <Text className={textClassName} style={cn<TextStyle>(styles.text, textColorStyle, textStyle)}>
             {children}
           </Text>
         ) : (

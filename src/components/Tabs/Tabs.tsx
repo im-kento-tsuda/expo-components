@@ -13,7 +13,7 @@ const TabsContext = createContext<TabsContextType>({
 
 export const useTabs = () => useContext(TabsContext);
 
-export interface TabsProps extends Omit<ViewProps, 'style'> {
+export interface TabsProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 選択中のタブの値 */
   value?: string;
   /** デフォルトの選択タブ */
@@ -24,10 +24,12 @@ export interface TabsProps extends Omit<ViewProps, 'style'> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Tabs = forwardRef<View, TabsProps>(
-  ({ value: controlledValue, defaultValue = '', onValueChange, children, style, ...props }, ref) => {
+  ({ value: controlledValue, defaultValue = '', onValueChange, children, style, className, ...props }, ref) => {
     const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
 
     const isControlled = controlledValue !== undefined;
@@ -45,7 +47,7 @@ const Tabs = forwardRef<View, TabsProps>(
 
     return (
       <TabsContext.Provider value={{ value, onValueChange: handleValueChange }}>
-        <View ref={ref} style={[styles.tabs, style]} {...props}>
+        <View ref={ref} className={className} style={[styles.tabs, style]} {...props}>
           {children}
         </View>
       </TabsContext.Provider>

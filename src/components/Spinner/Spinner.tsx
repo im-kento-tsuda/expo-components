@@ -5,13 +5,15 @@ import { cn } from '../../lib/utils';
 
 export type SpinnerSize = 'sm' | 'default' | 'lg';
 
-export interface SpinnerProps extends Omit<ViewProps, 'style'> {
+export interface SpinnerProps extends Omit<ViewProps, 'style' | 'className'> {
   /** スピナーのサイズ */
   size?: SpinnerSize;
   /** スピナーの色（指定しない場合はテーマのforeground） */
   color?: string;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const sizeMap: Record<SpinnerSize, number> = {
@@ -27,7 +29,7 @@ const borderWidthMap: Record<SpinnerSize, number> = {
 };
 
 const Spinner = forwardRef<View, SpinnerProps>(
-  ({ size = 'default', color, style, ...props }, ref) => {
+  ({ size = 'default', color, style, className, ...props }, ref) => {
     const colors = useColors();
     const spinValue = useRef(new Animated.Value(0)).current;
 
@@ -63,7 +65,7 @@ const Spinner = forwardRef<View, SpinnerProps>(
     };
 
     return (
-      <View ref={ref} style={cn<ViewStyle>(styles.container, style)} {...props}>
+      <View ref={ref} className={className} style={cn<ViewStyle>(styles.container, style)} {...props}>
         <Animated.View
           style={[
             styles.spinner,

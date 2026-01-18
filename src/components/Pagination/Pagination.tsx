@@ -12,17 +12,19 @@ import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
 // Pagination
-export interface PaginationProps extends Omit<ViewProps, 'style'> {
+export interface PaginationProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Pagination = forwardRef<View, PaginationProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     return (
-      <View ref={ref} style={[styles.pagination, style]} accessibilityRole="none" {...props}>
+      <View ref={ref} className={className} style={[styles.pagination, style]} accessibilityRole="none" {...props}>
         {children}
       </View>
     );
@@ -32,17 +34,19 @@ const Pagination = forwardRef<View, PaginationProps>(
 Pagination.displayName = 'Pagination';
 
 // PaginationContent
-export interface PaginationContentProps extends Omit<ViewProps, 'style'> {
+export interface PaginationContentProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const PaginationContent = forwardRef<View, PaginationContentProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     return (
-      <View ref={ref} style={[styles.content, style]} {...props}>
+      <View ref={ref} className={className} style={[styles.content, style]} {...props}>
         {children}
       </View>
     );
@@ -52,17 +56,19 @@ const PaginationContent = forwardRef<View, PaginationContentProps>(
 PaginationContent.displayName = 'PaginationContent';
 
 // PaginationItem
-export interface PaginationItemProps extends Omit<ViewProps, 'style'> {
+export interface PaginationItemProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const PaginationItem = forwardRef<View, PaginationItemProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     return (
-      <View ref={ref} style={[styles.item, style]} {...props}>
+      <View ref={ref} className={className} style={[styles.item, style]} {...props}>
         {children}
       </View>
     );
@@ -83,6 +89,8 @@ export interface PaginationLinkProps {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
   /** テキストのカスタムスタイル */
   textStyle?: TextStyle;
 }
@@ -93,6 +101,7 @@ const PaginationLink: React.FC<PaginationLinkProps> = ({
   disabled = false,
   children,
   style,
+  className,
   textStyle,
 }) => {
   const colors = useColors();
@@ -116,6 +125,7 @@ const PaginationLink: React.FC<PaginationLinkProps> = ({
     <Pressable
       onPress={onPress}
       disabled={disabled}
+      className={className}
       style={({ pressed }) => [containerStyle, pressed && !disabled && styles.linkPressed]}
     >
       {typeof children === 'string' || typeof children === 'number' ? (
@@ -139,6 +149,8 @@ export interface PaginationPreviousProps {
   label?: string;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const PaginationPrevious: React.FC<PaginationPreviousProps> = ({
@@ -146,6 +158,7 @@ const PaginationPrevious: React.FC<PaginationPreviousProps> = ({
   disabled = false,
   label = '前へ',
   style,
+  className,
 }) => {
   const colors = useColors();
 
@@ -153,6 +166,7 @@ const PaginationPrevious: React.FC<PaginationPreviousProps> = ({
     <Pressable
       onPress={onPress}
       disabled={disabled}
+      className={className}
       style={({ pressed }) => [
         styles.navButton,
         { borderColor: colors.border },
@@ -183,6 +197,8 @@ export interface PaginationNextProps {
   label?: string;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const PaginationNext: React.FC<PaginationNextProps> = ({
@@ -190,6 +206,7 @@ const PaginationNext: React.FC<PaginationNextProps> = ({
   disabled = false,
   label = '次へ',
   style,
+  className,
 }) => {
   const colors = useColors();
 
@@ -197,6 +214,7 @@ const PaginationNext: React.FC<PaginationNextProps> = ({
     <Pressable
       onPress={onPress}
       disabled={disabled}
+      className={className}
       style={({ pressed }) => [
         styles.navButton,
         { borderColor: colors.border },
@@ -221,13 +239,15 @@ PaginationNext.displayName = 'PaginationNext';
 export interface PaginationEllipsisProps {
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
-const PaginationEllipsis: React.FC<PaginationEllipsisProps> = ({ style }) => {
+const PaginationEllipsis: React.FC<PaginationEllipsisProps> = ({ style, className }) => {
   const colors = useColors();
 
   return (
-    <View style={[styles.ellipsis, style]}>
+    <View className={className} style={[styles.ellipsis, style]}>
       <Text style={[styles.ellipsisText, { color: colors.mutedForeground }]}>...</Text>
     </View>
   );

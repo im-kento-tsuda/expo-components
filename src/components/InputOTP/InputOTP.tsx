@@ -31,7 +31,7 @@ const InputOTPContext = createContext<InputOTPContextType>({
 
 export const useInputOTP = () => useContext(InputOTPContext);
 
-export interface InputOTPProps extends Omit<ViewProps, 'style'> {
+export interface InputOTPProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 現在の値 */
   value: string;
   /** 値変更時のコールバック */
@@ -46,10 +46,12 @@ export interface InputOTPProps extends Omit<ViewProps, 'style'> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const InputOTP = forwardRef<View, InputOTPProps>(
-  ({ value, onValueChange, onComplete, maxLength = 6, disabled = false, children, style, ...props }, ref) => {
+  ({ value, onValueChange, onComplete, maxLength = 6, disabled = false, children, style, className, ...props }, ref) => {
     const [focusedIndex, setFocusedIndex] = useState(-1);
     const slotsRef = useRef<(TextInput | null)[]>([]);
 
@@ -123,7 +125,7 @@ const InputOTP = forwardRef<View, InputOTPProps>(
           registerSlot,
         }}
       >
-        <View ref={ref} style={[styles.container, style]} {...props}>
+        <View ref={ref} className={className} style={[styles.container, style]} {...props}>
           {children}
         </View>
       </InputOTPContext.Provider>

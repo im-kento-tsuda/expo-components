@@ -2,15 +2,17 @@ import React, { forwardRef, useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated, type ViewStyle, type ViewProps } from 'react-native';
 import { useAccordionItem } from './AccordionItem';
 
-export interface AccordionContentProps extends Omit<ViewProps, 'style'> {
+export interface AccordionContentProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const AccordionContent = forwardRef<View, AccordionContentProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const { isOpen } = useAccordionItem();
     const heightAnim = useRef(new Animated.Value(isOpen ? 1 : 0)).current;
     const [contentHeight, setContentHeight] = React.useState(0);
@@ -45,6 +47,7 @@ const AccordionContent = forwardRef<View, AccordionContentProps>(
       >
         <View
           ref={ref}
+          className={className}
           style={[styles.content, style]}
           onLayout={(e) => {
             const height = e.nativeEvent.layout.height;

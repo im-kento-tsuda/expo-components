@@ -3,7 +3,7 @@ import { View, Animated, StyleSheet, type ViewStyle, type ViewProps, type Dimens
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface SkeletonProps extends Omit<ViewProps, 'style'> {
+export interface SkeletonProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 幅 */
   width?: DimensionValue;
   /** 高さ */
@@ -14,10 +14,12 @@ export interface SkeletonProps extends Omit<ViewProps, 'style'> {
   circle?: boolean;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Skeleton = forwardRef<View, SkeletonProps>(
-  ({ width, height, borderRadius = 4, circle = false, style, ...props }, ref) => {
+  ({ width, height, borderRadius = 4, circle = false, style, className, ...props }, ref) => {
     const colors = useColors();
     const animatedValue = useRef(new Animated.Value(0)).current;
 
@@ -57,7 +59,7 @@ const Skeleton = forwardRef<View, SkeletonProps>(
     };
 
     return (
-      <View ref={ref} style={cn<ViewStyle>(styles.container, sizeStyle, style)} {...props}>
+      <View ref={ref} className={className} style={cn<ViewStyle>(styles.container, sizeStyle, style)} {...props}>
         <Animated.View
           style={[styles.skeleton, skeletonStyle, { opacity }]}
         />

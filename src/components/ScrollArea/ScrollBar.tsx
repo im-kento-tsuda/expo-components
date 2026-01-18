@@ -3,15 +3,17 @@ import { View, StyleSheet, type ViewStyle, type ViewProps } from 'react-native';
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface ScrollBarProps extends Omit<ViewProps, 'style'> {
+export interface ScrollBarProps extends Omit<ViewProps, 'style' | 'className'> {
   /** スクロールバーの向き */
   orientation?: 'vertical' | 'horizontal';
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const ScrollBar = forwardRef<View, ScrollBarProps>(
-  ({ orientation = 'vertical', style, ...props }, ref) => {
+  ({ orientation = 'vertical', style, className, ...props }, ref) => {
     const colors = useColors();
     const isVertical = orientation === 'vertical';
 
@@ -22,6 +24,7 @@ const ScrollBar = forwardRef<View, ScrollBarProps>(
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.scrollBar,
           isVertical ? styles.vertical : styles.horizontal,

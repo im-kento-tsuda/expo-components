@@ -19,7 +19,7 @@ const FormContext = createContext<FormContextType>({
 
 export const useForm = () => useContext(FormContext);
 
-export interface FormProps extends Omit<ViewProps, 'style'> {
+export interface FormProps extends Omit<ViewProps, 'style' | 'className'> {
   /** フォームのエラー状態 */
   errors?: FormErrors;
   /** エラー設定時のコールバック */
@@ -30,10 +30,12 @@ export interface FormProps extends Omit<ViewProps, 'style'> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Form = forwardRef<View, FormProps>(
-  ({ errors = {}, onErrorChange, isSubmitting = false, children, style, ...props }, ref) => {
+  ({ errors = {}, onErrorChange, isSubmitting = false, children, style, className, ...props }, ref) => {
     const setError = useCallback(
       (name: string, error: string | undefined) => {
         const newErrors = { ...errors };
@@ -53,7 +55,7 @@ const Form = forwardRef<View, FormProps>(
 
     return (
       <FormContext.Provider value={{ errors, setError, clearErrors, isSubmitting }}>
-        <View ref={ref} style={[styles.form, style]} {...props}>
+        <View ref={ref} className={className} style={[styles.form, style]} {...props}>
           {children}
         </View>
       </FormContext.Provider>

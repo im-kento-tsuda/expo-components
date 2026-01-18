@@ -11,15 +11,17 @@ import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 import { useSelect } from './Select';
 
-export interface SelectTriggerProps extends Omit<PressableProps, 'style' | 'onPress'> {
+export interface SelectTriggerProps extends Omit<PressableProps, 'style' | 'onPress' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const SelectTrigger = forwardRef<View, SelectTriggerProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const colors = useColors();
     const { open, setOpen, disabled } = useSelect();
 
@@ -35,6 +37,7 @@ const SelectTrigger = forwardRef<View, SelectTriggerProps>(
     return (
       <Pressable
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.trigger,
           triggerStyle,

@@ -13,15 +13,17 @@ import { cn } from '../../lib/utils';
 import { useAccordion } from './Accordion';
 import { useAccordionItem } from './AccordionItem';
 
-export interface AccordionTriggerProps extends Omit<PressableProps, 'style'> {
+export interface AccordionTriggerProps extends Omit<PressableProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const AccordionTrigger = forwardRef<React.ElementRef<typeof Pressable>, AccordionTriggerProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const colors = useColors();
     const { onValueChange } = useAccordion();
     const { value, isOpen } = useAccordionItem();
@@ -52,6 +54,7 @@ const AccordionTrigger = forwardRef<React.ElementRef<typeof Pressable>, Accordio
     return (
       <Pressable
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(styles.trigger, style)}
         onPress={() => onValueChange(value)}
         accessibilityRole="button"

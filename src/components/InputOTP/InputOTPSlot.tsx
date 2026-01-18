@@ -11,15 +11,17 @@ import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 import { useInputOTP } from './InputOTP';
 
-export interface InputOTPSlotProps extends Omit<TextInputProps, 'style' | 'value' | 'onChangeText'> {
+export interface InputOTPSlotProps extends Omit<TextInputProps, 'style' | 'value' | 'onChangeText' | 'className'> {
   /** スロットのインデックス */
   index: number;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const InputOTPSlot = forwardRef<TextInput, InputOTPSlotProps>(
-  ({ index, style, ...props }, ref) => {
+  ({ index, style, className, ...props }, ref) => {
     const colors = useColors();
     const inputRef = useRef<TextInput | null>(null);
     const { value, disabled, focusedIndex, setFocusedIndex, handleChange, handleKeyPress, registerSlot } = useInputOTP();
@@ -71,6 +73,7 @@ const InputOTPSlot = forwardRef<TextInput, InputOTPSlotProps>(
     return (
       <TextInput
         ref={setRefs}
+        className={className}
         style={cn<TextStyle>(styles.slot, slotStyle, disabled && styles.disabled, style)}
         value={char}
         onChangeText={handleTextChange}

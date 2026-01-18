@@ -16,7 +16,7 @@ const RadioGroupContext = createContext<RadioGroupContextType>({
 
 export const useRadioGroup = () => useContext(RadioGroupContext);
 
-export interface RadioGroupProps extends Omit<ViewProps, 'style'> {
+export interface RadioGroupProps extends Omit<ViewProps, 'style' | 'className'> {
   /** 選択された値 */
   value?: string;
   /** 値変更時のコールバック */
@@ -27,13 +27,15 @@ export interface RadioGroupProps extends Omit<ViewProps, 'style'> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const RadioGroup = forwardRef<View, RadioGroupProps>(
-  ({ value, onValueChange, disabled = false, children, style, ...props }, ref) => {
+  ({ value, onValueChange, disabled = false, children, style, className, ...props }, ref) => {
     return (
       <RadioGroupContext.Provider value={{ value, onValueChange, disabled }}>
-        <View ref={ref} style={cn<ViewStyle>(styles.group, style)} {...props}>
+        <View ref={ref} className={className} style={cn<ViewStyle>(styles.group, style)} {...props}>
           {children}
         </View>
       </RadioGroupContext.Provider>

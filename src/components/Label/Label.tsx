@@ -3,7 +3,7 @@ import { Text, StyleSheet, type TextStyle, type TextProps } from 'react-native';
 import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 
-export interface LabelProps extends Omit<TextProps, 'style'> {
+export interface LabelProps extends Omit<TextProps, 'style' | 'className'> {
   /** ラベルのテキスト */
   children: React.ReactNode;
   /** 必須項目かどうか */
@@ -12,10 +12,12 @@ export interface LabelProps extends Omit<TextProps, 'style'> {
   disabled?: boolean;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Label = forwardRef<Text, LabelProps>(
-  ({ children, required = false, disabled = false, style, ...props }, ref) => {
+  ({ children, required = false, disabled = false, style, className, ...props }, ref) => {
     const colors = useColors();
 
     const labelStyle: TextStyle = {
@@ -25,6 +27,7 @@ const Label = forwardRef<Text, LabelProps>(
     return (
       <Text
         ref={ref}
+        className={className}
         style={cn<TextStyle>(styles.label, labelStyle, style)}
         {...props}
       >

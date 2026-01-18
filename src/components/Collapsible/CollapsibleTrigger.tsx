@@ -3,20 +3,23 @@ import { Pressable, StyleSheet, type ViewStyle, type PressableProps } from 'reac
 import { cn } from '../../lib/utils';
 import { useCollapsible } from './Collapsible';
 
-export interface CollapsibleTriggerProps extends Omit<PressableProps, 'style'> {
+export interface CollapsibleTriggerProps extends Omit<PressableProps, 'style' | 'className'> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const CollapsibleTrigger = forwardRef<React.ElementRef<typeof Pressable>, CollapsibleTriggerProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const { open, onOpenChange, disabled } = useCollapsible();
 
     return (
       <Pressable
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(styles.trigger, disabled && styles.disabled, style)}
         onPress={() => onOpenChange(!open)}
         disabled={disabled}

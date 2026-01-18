@@ -4,15 +4,17 @@ import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 import { useField } from './Field';
 
-export interface FieldErrorProps extends Omit<TextProps, 'style' | 'children'> {
+export interface FieldErrorProps extends Omit<TextProps, 'style' | 'children' | 'className'> {
   /** エラーメッセージ（省略時はFieldのerrorを使用） */
   children?: React.ReactNode;
   /** カスタムスタイル */
   style?: TextStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const FieldError = forwardRef<Text, FieldErrorProps>(
-  ({ children, style, ...props }, ref) => {
+  ({ children, style, className, ...props }, ref) => {
     const colors = useColors();
     const { error } = useField();
 
@@ -29,6 +31,7 @@ const FieldError = forwardRef<Text, FieldErrorProps>(
     return (
       <Text
         ref={ref}
+        className={className}
         style={cn<TextStyle>(styles.error, errorStyle, style)}
         accessibilityRole="alert"
         {...props}

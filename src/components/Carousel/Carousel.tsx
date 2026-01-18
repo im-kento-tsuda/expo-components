@@ -44,7 +44,7 @@ const useCarousel = () => {
   return context;
 };
 
-export interface CarouselProps extends Omit<ViewProps, "style"> {
+export interface CarouselProps extends Omit<ViewProps, "style" | "className"> {
   /** 方向 */
   orientation?: CarouselOrientation;
   /** 自動再生 */
@@ -61,6 +61,8 @@ export interface CarouselProps extends Omit<ViewProps, "style"> {
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
 const Carousel = forwardRef<View, CarouselProps>(
@@ -74,6 +76,7 @@ const Carousel = forwardRef<View, CarouselProps>(
       onIndexChange,
       children,
       style,
+      className,
       ...props
     },
     ref
@@ -173,6 +176,7 @@ const Carousel = forwardRef<View, CarouselProps>(
       <CarouselContext.Provider value={contextValue}>
         <View
           ref={ref}
+          className={className}
           style={[styles.container, style]}
           onLayout={(e) => {
             const { width, height } = e.nativeEvent.layout;
@@ -209,11 +213,13 @@ const Carousel = forwardRef<View, CarouselProps>(
 Carousel.displayName = "Carousel";
 
 // CarouselContent
-export interface CarouselContentProps extends Omit<ViewProps, "style"> {
+export interface CarouselContentProps extends Omit<ViewProps, "style" | "className"> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
   /** @internal */
   scrollViewRef?: React.RefObject<ScrollView>;
   /** @internal */
@@ -223,7 +229,7 @@ export interface CarouselContentProps extends Omit<ViewProps, "style"> {
 }
 
 const CarouselContent = forwardRef<View, CarouselContentProps>(
-  ({ children, style, scrollViewRef, onScroll, containerSize }, _ref) => {
+  ({ children, style, className, scrollViewRef, onScroll, containerSize }, _ref) => {
     const { orientation } = useCarousel();
     const isHorizontal = orientation === "horizontal";
 
@@ -236,6 +242,7 @@ const CarouselContent = forwardRef<View, CarouselContentProps>(
         showsVerticalScrollIndicator={false}
         onScroll={onScroll}
         scrollEventThrottle={16}
+        className={className}
         style={[styles.scrollView, style]}
       >
         <View
@@ -266,17 +273,19 @@ const CarouselContent = forwardRef<View, CarouselContentProps>(
 CarouselContent.displayName = "CarouselContent";
 
 // CarouselItem
-export interface CarouselItemProps extends Omit<ViewProps, "style"> {
+export interface CarouselItemProps extends Omit<ViewProps, "style" | "className"> {
   /** 子要素 */
   children: React.ReactNode;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
   /** @internal */
   containerSize?: { width: number; height: number };
 }
 
 const CarouselItem = forwardRef<View, CarouselItemProps>(
-  ({ children, style, containerSize, ...props }, ref) => {
+  ({ children, style, className, containerSize, ...props }, ref) => {
     const { orientation } = useCarousel();
     const isHorizontal = orientation === "horizontal";
 
@@ -286,7 +295,7 @@ const CarouselItem = forwardRef<View, CarouselItemProps>(
     };
 
     return (
-      <View ref={ref} style={[styles.item, itemStyle, style]} {...props}>
+      <View ref={ref} className={className} style={[styles.item, itemStyle, style]} {...props}>
         {children}
       </View>
     );
@@ -301,11 +310,14 @@ export interface CarouselPreviousProps {
   style?: ViewStyle;
   /** 子要素（カスタムボタン） */
   children?: React.ReactNode;
+  /** NativeWind className */
+  className?: string;
 }
 
 const CarouselPrevious: React.FC<CarouselPreviousProps> = ({
   style,
   children,
+  className,
 }) => {
   const colors = useColors();
   const { scrollPrev, canScrollPrev, orientation } = useCarousel();
@@ -327,6 +339,7 @@ const CarouselPrevious: React.FC<CarouselPreviousProps> = ({
       <Pressable
         onPress={scrollPrev}
         disabled={!canScrollPrev}
+        className={className}
         style={buttonStyle}
       >
         {children || (
@@ -356,9 +369,11 @@ export interface CarouselNextProps {
   style?: ViewStyle;
   /** 子要素（カスタムボタン） */
   children?: React.ReactNode;
+  /** NativeWind className */
+  className?: string;
 }
 
-const CarouselNext: React.FC<CarouselNextProps> = ({ style, children }) => {
+const CarouselNext: React.FC<CarouselNextProps> = ({ style, children, className }) => {
   const colors = useColors();
   const { scrollNext, canScrollNext, orientation } = useCarousel();
 
@@ -379,6 +394,7 @@ const CarouselNext: React.FC<CarouselNextProps> = ({ style, children }) => {
       <Pressable
         onPress={scrollNext}
         disabled={!canScrollNext}
+        className={className}
         style={buttonStyle}
       >
         {children || (
@@ -406,9 +422,11 @@ CarouselNext.displayName = "CarouselNext";
 export interface CarouselDotsProps {
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
 }
 
-const CarouselDots: React.FC<CarouselDotsProps> = ({ style }) => {
+const CarouselDots: React.FC<CarouselDotsProps> = ({ style, className }) => {
   const colors = useColors();
   const { currentIndex, totalItems, scrollToIndex, orientation } =
     useCarousel();
@@ -419,7 +437,7 @@ const CarouselDots: React.FC<CarouselDotsProps> = ({ style }) => {
       : [styles.dotsBase, style];
 
   return (
-    <View style={dotsStyle}>
+    <View className={className} style={dotsStyle}>
       {Array.from({ length: totalItems }).map((_, index) => (
         <Pressable
           key={index}

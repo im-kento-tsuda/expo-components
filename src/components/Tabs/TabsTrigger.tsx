@@ -4,7 +4,7 @@ import { useColors } from '../../lib/theme';
 import { cn } from '../../lib/utils';
 import { useTabs } from './Tabs';
 
-export interface TabsTriggerProps extends Omit<PressableProps, 'style'> {
+export interface TabsTriggerProps extends Omit<PressableProps, 'style' | 'className'> {
   /** タブの値 */
   value: string;
   /** 子要素 */
@@ -13,10 +13,14 @@ export interface TabsTriggerProps extends Omit<PressableProps, 'style'> {
   disabled?: boolean;
   /** カスタムスタイル */
   style?: ViewStyle;
+  /** NativeWind className */
+  className?: string;
+  /** NativeWind textClassName */
+  textClassName?: string;
 }
 
 const TabsTrigger = forwardRef<React.ElementRef<typeof Pressable>, TabsTriggerProps>(
-  ({ value, children, disabled = false, style, ...props }, ref) => {
+  ({ value, children, disabled = false, style, className, textClassName, ...props }, ref) => {
     const colors = useColors();
     const { value: selectedValue, onValueChange } = useTabs();
     const isSelected = selectedValue === value;
@@ -32,6 +36,7 @@ const TabsTrigger = forwardRef<React.ElementRef<typeof Pressable>, TabsTriggerPr
     return (
       <Pressable
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(
           styles.trigger,
           triggerStyle,
@@ -44,7 +49,7 @@ const TabsTrigger = forwardRef<React.ElementRef<typeof Pressable>, TabsTriggerPr
         accessibilityState={{ selected: isSelected, disabled }}
         {...props}
       >
-        <Text style={[styles.text, textStyle]}>{children}</Text>
+        <Text className={textClassName} style={[styles.text, textStyle]}>{children}</Text>
       </Pressable>
     );
   }

@@ -5,7 +5,7 @@ import { cn } from '../../lib/utils';
 
 export type BadgeVariant = 'default' | 'secondary' | 'destructive' | 'outline';
 
-export interface BadgeProps extends Omit<ViewProps, 'style'> {
+export interface BadgeProps extends Omit<ViewProps, 'style' | 'className'> {
   /** バッジのバリアント */
   variant?: BadgeVariant;
   /** バッジのテキスト */
@@ -14,10 +14,14 @@ export interface BadgeProps extends Omit<ViewProps, 'style'> {
   style?: ViewStyle;
   /** テキストのカスタムスタイル */
   textStyle?: TextStyle;
+  /** NativeWind className (コンテナ用) */
+  className?: string;
+  /** NativeWind className (テキスト用) */
+  textClassName?: string;
 }
 
 const Badge = forwardRef<View, BadgeProps>(
-  ({ variant = 'default', children, style, textStyle, ...props }, ref) => {
+  ({ variant = 'default', children, style, textStyle, className, textClassName, ...props }, ref) => {
     const colors = useColors();
 
     const variantStyles = getVariantStyles(colors);
@@ -26,11 +30,12 @@ const Badge = forwardRef<View, BadgeProps>(
     return (
       <View
         ref={ref}
+        className={className}
         style={cn<ViewStyle>(styles.badge, variantStyles[variant], style)}
         {...props}
       >
         {typeof children === 'string' ? (
-          <Text style={cn<TextStyle>(styles.text, textVariantStyles[variant], textStyle)}>
+          <Text className={textClassName} style={cn<TextStyle>(styles.text, textVariantStyles[variant], textStyle)}>
             {children}
           </Text>
         ) : (
