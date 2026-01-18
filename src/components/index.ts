@@ -42,3 +42,4 @@ export * from './Carousel';
 export * from './Command';
 export * from './NavigationMenu';
 export * from './Chart';
+export * from './Chat';
